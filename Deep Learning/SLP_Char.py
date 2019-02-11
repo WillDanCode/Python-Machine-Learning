@@ -1,5 +1,6 @@
 from WildanNeuralNetwork import SLP
 import numpy as np
+from random import *
 
 print(15*'=' + ' Single Layer Perceptron Pada Pengenalan Karakter Huruf ' + 15*'=')
 
@@ -60,12 +61,16 @@ targetHuruf = {
 }
 
 # Proses training
-slp = SLP(len(bipolar_a))
+# Nilai alpha dan threshold harus pas agar bisa mendeteksi semua huruf
+# slp = SLP(len(bipolar_a), alpha=round(random(), 1), threshold=round(random(), 1))
+slp = SLP(len(bipolar_a), alpha=0.1, threshold=0.3)
 slp.trainChar(data, target)
 
 weight, bias = slp.getWeightBias()
 print('Weight: ', weight)
-print('Bias: ', bias)
+# print('Bias: ', bias)
+# print('Alpha: ', slp.alpha)
+print('Threshold: ', slp.threshold)
 
 # =========================== Testing =============================
 
@@ -111,7 +116,14 @@ bipolar_k_test = slp.polaToBipolar(k_test)
 data_test = [bipolar_a_test, bipolar_b_test, bipolar_c_test, bipolar_d_test, bipolar_e_test, bipolar_j_test, bipolar_k_test]
 test = slp.testChar(data_test)
 print('Hasil SLP:')
-print(test)
+# print(test)
 for t in test:
     t = tuple(t)
     print(targetHuruf[t])
+
+
+"""
+Untuk kasus pada training pola huruf ini, nilai alpha dan threshold paling optimal:
+Alpha = 0.1
+Threshold = 0.3 ; 0.4; 0.5
+"""
