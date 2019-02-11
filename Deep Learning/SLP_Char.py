@@ -68,9 +68,9 @@ slp.trainChar(data, target)
 
 weight, bias = slp.getWeightBias()
 print('Weight: ', weight)
-# print('Bias: ', bias)
+print('Bias: ', bias)
 # print('Alpha: ', slp.alpha)
-print('Threshold: ', slp.threshold)
+# print('Threshold: ', slp.threshold)
 
 # =========================== Testing =============================
 
