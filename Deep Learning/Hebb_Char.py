@@ -1,9 +1,7 @@
-from WildanNeuralNetwork import Hebb
+from WildanNN import Hebb
 import numpy as np
 
 print(15*'=' + ' Hebb Learning Pada Pengenalan Karakter Huruf ' + 15*'=')
-
-hebb = Hebb()
 
 # Membaca berkas o.txt
 berkas = open('../Dataset/Pengenalan Karakter/O.txt', 'r')
@@ -14,6 +12,8 @@ berkas.close()
 berkas = open('../Dataset/Pengenalan Karakter/X.txt', 'r')
 x = berkas.read()
 berkas.close()
+
+hebb = Hebb()
 
 # Mengubah pola huruf menjadi list angka bipolar
 bipolar_o = hebb.polaToBipolar(o)

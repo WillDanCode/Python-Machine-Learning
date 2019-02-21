@@ -1,4 +1,4 @@
-from WildanNeuralNetwork import Hebb
+from WildanNN import Hebb
 import numpy as np
 
 print(15*'=' + ' Hebb Learning Pada Fungsi Logika ' + 15*'=')

@@ -1,4 +1,4 @@
-from WildanNeuralNetwork import SLP
+from WildanNN import SLP
 import numpy as np
 
 print(15*'=' + ' Single Layer Perceptron Pada Fungsi Logika ' + 15*'=')
