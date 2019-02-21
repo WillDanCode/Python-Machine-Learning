@@ -7,7 +7,7 @@ Created on Fri Nov  9 11:03:08 2018
 
 import numpy as np
 import pandas as pd
-import MyMachineLearning as ml
+import WildanML as ml
 
 #Read Dataset
 ds = pd.read_csv('../Dataset/mushrooms.csv')
