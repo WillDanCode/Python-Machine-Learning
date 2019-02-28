@@ -140,7 +140,7 @@ class Distance():
 
     # Supremum distance
     def supremum(self):
-        hasil = np.abs(np.max(self.test) - np.max(self.train))
+        hasil = np.max(np.abs(self.test - self.train))
         return hasil
 
 # Implementasi untuk perhitungan similarity & dissimilarity
