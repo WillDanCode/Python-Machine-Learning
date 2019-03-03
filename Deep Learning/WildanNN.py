@@ -158,17 +158,28 @@ class SLP(object):
         """
 
         stop = False
+        # epoch = 0
+        # iterasi = 0
         while stop is False:
             stop = True
+            # epoch += 1
+            # print('\nEpoch', epoch)
             for data,target in zip(train_data,train_target):
+                # iterasi += 1
+                # print('Iterasi', iterasi)
                 v = np.dot(data,self.weight) + self.bias
                 y = self.aktivasi(v)
+                # print('y:', y)
+                # print('Bobot Sebelum:', self.weight)
+                # print('Bias Sebelum:', self.bias)
                 if y != target:
                     stop = False
                     # w (baru) = w (lama) + alpha * target * data latih
                     self.weight = self.weight + self.alpha * target * data
                     # b (baru) = b (lama) + alpha * target
                     self.bias = self.bias + self.alpha * target
+                # print('Bobot Sesudah:', self.weight)
+                # print('Bias Sesudah:', self.bias)
 
     def trainChar(self,train_data,train_target):
         """
