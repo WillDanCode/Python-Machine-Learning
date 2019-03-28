@@ -143,6 +143,10 @@ class Distance():
         hasil = np.max(np.abs(self.test - self.train))
         return hasil
 
+# Implementasi untuk algoritme clustering K-Means
+class KMeans:
+    pass
+
 # Implementasi untuk perhitungan similarity & dissimilarity
 class ProximityMeasure():
 
@@ -257,3 +261,77 @@ class ProximityMeasure():
             mirip = np.argsort(d)[1]
             print('Data ke-', counter, 'paling mirip dengan data ke-', mirip)
             counter += 1
+
+# Implementasi untuk prediksi menggunakan Regresi
+class Regression():
+
+    def __init__(self):
+        pass
+
+    # Regresi Linier
+    def linearRegression(self, featureX, featureY, n, predictX):
+        """
+        :param featureX: variable independent, type: ndarray
+        :param featureY: variable dependent / variable yang diprediksi, type: ndarray
+        :param n: banyaknya data, type: int
+        :param predictX: nilai prediksi fitur x, type: int / ndarray
+        :return: nilai prediksi fitur y, type: int / ndarray
+        """
+
+        sigmaX = np.sum(featureX)
+        sigmaY = np.sum(featureY)
+        sigmaXY = np.sum(featureX * featureY)
+        sigmaX2 = np.sum(featureX ** 2)
+
+        # y = b0 + b1x
+        b1 = (n * sigmaXY - sigmaX * sigmaY) / (n * sigmaX2 - sigmaX ** 2)
+        b0 = (sigmaY - b1 * sigmaX) / n
+        yPred = b0 + b1 * predictX
+        return yPred
+
+    # Regresi Linier Berganda (2 variable independent)
+    def multiLinearRegression(self, featureX1, featureX2, featureY, predictX1, predictX2):
+        """
+        :param featureX1: variable independent, type: ndarray
+        :param featureX2: variable independent, type: ndarray
+        :param featureY: variable dependent / variable yang diprediksi, type: ndarray
+        :param predictX1: nilai prediksi fitur x1, type: int / ndarray
+        :param predictX2: nilai prediksi fitur x2, type: int / ndarray
+        :return: nilai prediksi fitur y, type: int / ndarray
+        """
+
+        sigmaX12 = np.sum(featureX1 ** 2)
+        sigmaX22 = np.sum(featureX2 ** 2)
+        sigmaX1X2 = np.sum(featureX1 * featureX2)
+        sigmaX1Y = np.sum(featureX1 * featureY)
+        sigmaX2Y = np.sum(featureX2 * featureY)
+
+        # y = b0 + b1x1 + b2x2
+        b1 = (sigmaX22 * sigmaX1Y - sigmaX1X2 * sigmaX2Y) / (sigmaX12 * sigmaX22 - sigmaX1X2 ** 2)
+        b2 = (sigmaX12 * sigmaX2Y - sigmaX1X2 * sigmaX1Y) / (sigmaX12 * sigmaX22 - sigmaX1X2 ** 2)
+        b0 = np.mean(featureY) - b1 * np.mean(featureX1) - b2 * np.mean(featureX2)
+
+        yPred = b0 + b1 * predictX1 + b2 * predictX2
+        return yPred
+
+    # Interpolasi Lagrange
+    def lagrange(self, featureX, featureY, predictX):
+        """
+        :param featureX:
+        :param featureY:
+        :param predictX:
+        :return:
+        """
+
+        # List Lagrange
+        l = []
+        for i, data in enumerate(featureX):
+            if i == 0:
+                temp = np.prod((predictX - featureX[i+1:])) / np.prod((featureX[i] - featureX[i+1:]))
+            else:
+                temp = np.prod((predictX - np.append(featureX[i+1:], featureX[:i]))) / np.prod((featureX[i] - np.append(featureX[i + 1:], featureX[:i])))
+            l.append(temp)
+        # l = np.prod(predictX - featureX) / np.prod(np.append(featureX[1:], featureX[0]) - featureX)
+
+        p = np.sum(featureY * l)
+        return p
