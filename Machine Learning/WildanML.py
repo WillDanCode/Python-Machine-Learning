@@ -317,10 +317,10 @@ class Regression():
     # Interpolasi Lagrange
     def lagrange(self, featureX, featureY, predictX):
         """
-        :param featureX:
-        :param featureY:
-        :param predictX:
-        :return:
+        :param featureX: variable independent, type: ndarray
+        :param featureY: variable dependent / variable yang diprediksi, type: ndarray
+        :param predictX: nilai prediksi fitur x, type: int
+        :return: nilai prediksi fitur y, type: int / ndarray
         """
 
         # List Lagrange
