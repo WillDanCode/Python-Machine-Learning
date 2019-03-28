@@ -326,12 +326,9 @@ class Regression():
         # List Lagrange
         l = []
         for i, data in enumerate(featureX):
-            if i == 0:
-                temp = np.prod((predictX - featureX[i+1:])) / np.prod((featureX[i] - featureX[i+1:]))
-            else:
-                temp = np.prod((predictX - np.append(featureX[i+1:], featureX[:i]))) / np.prod((featureX[i] - np.append(featureX[i + 1:], featureX[:i])))
+            temp = np.prod((predictX - featureX[featureX != data])) / np.prod((featureX[i] - featureX[featureX != data]))
             l.append(temp)
-        # l = np.prod(predictX - featureX) / np.prod(np.append(featureX[1:], featureX[0]) - featureX)
 
+        # l = np.array(l)
         p = np.sum(featureY * l)
         return p

@@ -70,13 +70,23 @@ print('\n' + 15*'=' + ' Interpolasi Lagrange ' + 15*'=')
 data = pd.read_csv('../Dataset/dataLagrange.txt')
 x = np.array(data['X'])
 y = np.array(data['Y'])
-# yPred = regresi.lagrange(x,y,x)
+yPred = np.array([])
+for i in x:
+    yPred = np.append(yPred, regresi.lagrange(x,y,i))
+
+error = abs(y-yPred)
+print('Error:', error)
 
 # Visualization
 plt.figure('Visualisasi Data')
 plt.scatter(x,y)
-# plt.plot(x,yPred,'r')
+plt.plot(x,yPred,'r')
 plt.title('Interpolasi Lagrange')
 plt.xlabel('Fitur X')
 plt.ylabel('Fitur Y')
 plt.show()
+
+# Prediction
+xPred = 3.5
+yPred = regresi.lagrange(x,y,xPred)
+print('Hasil Prediksi:', yPred)
