@@ -11,8 +11,10 @@ data = pd.read_csv('../Dataset/dataRegresi.txt')
 x = np.array(data['Biaya Iklan'])
 y = np.array(data['Tingkat Penjualan'])
 yPred = regresi.linearRegression(x, y, len(x), x)
+data['Tingkat Penjualan (Predict)'] = yPred
 error = abs(y-yPred)
-print('Error: \n', error)
+data['Error'] = error
+print(data)
 
 # Visualization
 plt.figure('Visualisasi Data')
@@ -41,8 +43,9 @@ x = np.array((data['SAT'], data['Attendance']))
 y = np.array(data['GPA'])
 gpaPred = regresi.multiLinearRegression(x[0], x[1], y, x[0], x[1])
 data['GPA Prediction'] = gpaPred # add new column
-error = pd.DataFrame({'Error':abs(data['GPA'] - data['GPA Prediction'])})
-print(error)
+error = abs(data['GPA'] - data['GPA Prediction'])
+data['Error'] = error
+print(data)
 
 # Selecting data with specific Attendance
 dataYes = data.loc[data['Attendance'] == 1]
@@ -59,9 +62,10 @@ plt.ylabel('GPA')
 plt.show()
 
 # Prediction
-xPred = [(1700, 0), (1670,1)]
-yPred = regresi.multiLinearRegression(x[0], x[1], y, xPred[1][0], xPred[1][1])
-print('Hasil Prediksi', yPred)
+xPred = np.array([(1700,0), (1670,1)])
+yPred = []
+yPred.append(regresi.multiLinearRegression(x[0], x[1], y, xPred[:,0], xPred[:,1]))
+print('Hasil Prediksi:', yPred)
 
 # =========================== Interpolasi Lagrange =================================
 
