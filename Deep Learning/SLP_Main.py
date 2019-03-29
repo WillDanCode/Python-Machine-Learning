@@ -9,6 +9,7 @@ data = np.array([[1,1],
                  [0,1],
                  [0,0]])
 target = np.array([1, -1, -1, -1])
+# target = np.array([[1], [-1], [-1], [-1]])
 
 # # OR
 # data = np.array([[1,1],
@@ -24,7 +25,7 @@ target = np.array([1, -1, -1, -1])
 #                  [0,0]])
 # target = np.array([-1, 1, 1, -1])
 
-slp = SLP(2)
+slp = SLP(2,1)
 slp.train(data,target)
 
 bobot,bias = slp.getWeightBias()
