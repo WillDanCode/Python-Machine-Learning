@@ -25,22 +25,6 @@ berkas = open('../Dataset/Pengenalan Karakter/E.txt', 'r')
 e = berkas.read()
 berkas.close()
 
-berkas = open('../Dataset/Pengenalan Karakter/F.txt', 'r')
-f = berkas.read()
-berkas.close()
-
-berkas = open('../Dataset/Pengenalan Karakter/G.txt', 'r')
-g = berkas.read()
-berkas.close()
-
-berkas = open('../Dataset/Pengenalan Karakter/H.txt', 'r')
-h = berkas.read()
-berkas.close()
-
-berkas = open('../Dataset/Pengenalan Karakter/I.txt', 'r')
-i = berkas.read()
-berkas.close()
-
 berkas = open('../Dataset/Pengenalan Karakter/J.txt', 'r')
 j = berkas.read()
 berkas.close()
@@ -57,17 +41,11 @@ bipolar_b = slp.polaToBipolar(b)
 bipolar_c = slp.polaToBipolar(c)
 bipolar_d = slp.polaToBipolar(d)
 bipolar_e = slp.polaToBipolar(e)
-bipolar_f = slp.polaToBipolar(f)
-bipolar_g = slp.polaToBipolar(g)
-bipolar_h = slp.polaToBipolar(h)
-bipolar_i = slp.polaToBipolar(i)
 bipolar_j = slp.polaToBipolar(j)
 bipolar_k = slp.polaToBipolar(k)
 
 # Menentukan data latih dan target
-data = [bipolar_a, bipolar_b, bipolar_c, bipolar_d, bipolar_e,
-        bipolar_f, bipolar_g, bipolar_h, bipolar_i, bipolar_j,
-        bipolar_k]
+data = [bipolar_a, bipolar_b, bipolar_c, bipolar_d, bipolar_e, bipolar_j, bipolar_k]
 target = np.eye(len(data))
 target = np.where(target == 0, -1, 1)
 
@@ -78,19 +56,15 @@ targetHuruf = {
     tuple(target[2]):'C',
     tuple(target[3]):'D',
     tuple(target[4]):'E',
-    tuple(target[5]):'F',
-    tuple(target[6]):'G',
-    tuple(target[7]):'H',
-    tuple(target[8]):'I',
-    tuple(target[9]):'J',
-    tuple(target[10]):'K'
+    tuple(target[5]):'J',
+    tuple(target[6]):'K'
 }
 
 # Proses training
 # Nilai alpha dan threshold harus pas agar bisa mendeteksi semua huruf
-slp = SLP(len(bipolar_a), alpha=round(random(), 1), threshold=round(random(), 1))
-# slp = SLP(sizeInput=len(bipolar_a), sizeOutput=len(target), alpha=0.1, threshold=0.3)
-slp.trainChar(data, target)
+# slp = SLP(sizeInput=len(bipolar_a), sizeOutput=len(target), alpha=round(random(), 1), threshold=round(random(), 1))
+slp = SLP(sizeInput=len(bipolar_a), sizeOutput=len(target), alpha=0.1, threshold=0.3)
+slp.train(data, target)
 
 weight, bias = slp.getWeightBias()
 print('Weight: ', weight)
@@ -121,22 +95,6 @@ berkas = open('../Dataset/Pengenalan Karakter/E_test.txt', 'r')
 e_test = berkas.read()
 berkas.close()
 
-berkas = open('../Dataset/Pengenalan Karakter/F_test.txt', 'r')
-f_test = berkas.read()
-berkas.close()
-
-berkas = open('../Dataset/Pengenalan Karakter/G_test.txt', 'r')
-g_test = berkas.read()
-berkas.close()
-
-berkas = open('../Dataset/Pengenalan Karakter/H_test.txt', 'r')
-h_test = berkas.read()
-berkas.close()
-
-berkas = open('../Dataset/Pengenalan Karakter/I_test.txt', 'r')
-i_test = berkas.read()
-berkas.close()
-
 berkas = open('../Dataset/Pengenalan Karakter/J_test.txt', 'r')
 j_test = berkas.read()
 berkas.close()
@@ -151,20 +109,13 @@ bipolar_b_test = slp.polaToBipolar(b_test)
 bipolar_c_test = slp.polaToBipolar(c_test)
 bipolar_d_test = slp.polaToBipolar(d_test)
 bipolar_e_test = slp.polaToBipolar(e_test)
-bipolar_f_test = slp.polaToBipolar(f_test)
-bipolar_g_test = slp.polaToBipolar(g_test)
-bipolar_h_test = slp.polaToBipolar(h_test)
-bipolar_i_test = slp.polaToBipolar(i_test)
 bipolar_j_test = slp.polaToBipolar(j_test)
 bipolar_k_test = slp.polaToBipolar(k_test)
 
 # Proses testing
-data_test = [bipolar_a_test, bipolar_b_test, bipolar_c_test, bipolar_d_test, bipolar_e_test,
-             bipolar_f_test, bipolar_g_test, bipolar_h_test, bipolar_i_test, bipolar_j_test,
-             bipolar_k_test]
-test = slp.testChar(data_test)
+data_test = [bipolar_a_test, bipolar_b_test, bipolar_c_test, bipolar_d_test, bipolar_e_test, bipolar_j_test, bipolar_k_test]
+test = slp.test(data_test)
 print('Hasil SLP:')
-# print(test)
 for t in test:
     t = tuple(t)
     print(targetHuruf[t])
