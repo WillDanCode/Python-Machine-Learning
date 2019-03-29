@@ -143,45 +143,10 @@ class SLP(object):
         self.sizeOutput = sizeOutput
         self.alpha = alpha
         self.threshold = threshold
-        self.weight = np.zeros(sizeInput)
-        self.bias = 0
+        self.weight = np.zeros((sizeInput, sizeOutput))
+        self.bias = np.zeros(sizeOutput)
 
     def train(self,train_data,train_target):
-        """
-        Proses pelatihan jaringan SLP
-
-        :param train_data: matriks angka bipolar {-1, 0, 1}
-            Kumpulan data latih
-        :param train_target: list angka bipolar {-1, 1}
-            Kumpulan target yang sesuai dengan data latih
-        :return: None
-        """
-
-        stop = False
-        # epoch = 0
-        # iterasi = 0
-        while stop is False:
-            stop = True
-            # epoch += 1
-            # print('\nEpoch', epoch)
-            for data,target in zip(train_data,train_target):
-                # iterasi += 1
-                # print('Iterasi', iterasi)
-                v = np.dot(data,self.weight) + self.bias
-                y = self.aktivasi(v)
-                # print('y:', y)
-                # print('Bobot Sebelum:', self.weight)
-                # print('Bias Sebelum:', self.bias)
-                if y != target:
-                    stop = False
-                    # w (baru) = w (lama) + alpha * target * data latih
-                    self.weight = self.weight + self.alpha * target * data
-                    # b (baru) = b (lama) + alpha * target
-                    self.bias = self.bias + self.alpha * target
-                # print('Bobot Sesudah:', self.weight)
-                # print('Bias Sesudah:', self.bias)
-
-    def trainChar(self,train_data,train_target):
         """
         Proses pelatihan jaringan SLP
 
@@ -192,19 +157,28 @@ class SLP(object):
         :return: None
         """
 
-        self.weight = np.zeros((self.sizeInput, self.sizeOutput))
-        self.bias = np.zeros(self.sizeOutput)
-
+        # Fungsi vectorize pada numpy digunakan agar fungsi aktivasi mampu menerima input list tanpa looping
+        v_aktivasi = np.vectorize(self.aktivasi)
         stop = False
+        # epoch = 0
+        # iterasi = 0
         while stop is False:
             stop = True
+            # epoch += 1
+            # print('\nEpoch', epoch)
             # data = 63, target = 7, train_data = (7,63), train_target = (7,7)
-            for data,target in zip(train_data,train_target): #loop 7 kali
+            # data = 2, target = 1, train_data = (4,2), train_target = (4,)
+            for data,target in zip(train_data,train_target):
+                # iterasi += 1
+                # print('Iterasi', iterasi)
                 v = np.dot(data,self.weight) + self.bias
-                y = np.array([])
-                for x in v:
-                    y = np.append(y, self.aktivasi(x))
-                # print(y)
+                y = v_aktivasi(v)
+                # print('y:', y)
+                # print('Bobot Sebelum:', self.weight)
+                # print('Bias Sebelum:', self.bias)
+
+                if type(target) is not np.ndarray:
+                    target = [target]
 
                 for i in range(len(data)):
                     for j in range(len(target)):
@@ -215,25 +189,10 @@ class SLP(object):
                             # b (baru) = b (lama) + alpha * target
                             self.bias[j] = self.bias[j] + self.alpha * target[j]
 
+                # print('Bobot Sesudah:', self.weight)
+                # print('Bias Sesudah:', self.bias)
+
     def test(self,test_data):
-        """
-        Mendapatkan output dari satu data uji menggunakan jaringan SLP dengan bobot dan bias input
-
-        :param test_data: Matriks (list of list) int64
-            Data yang akan ditentukan outputnya menggunakan jaringan SLP
-        :return: List of float
-            Nilai -1 atau 1 dalam bentuk list
-        """
-
-        output = np.array([])
-        for data in test_data:
-            v = np.dot(self.weight, data) + self.bias
-            y = self.aktivasi(v)
-            output = np.append(output, y)
-
-        return output
-
-    def testChar(self,test_data):
         """
         Mendapatkan output dari satu data uji menggunakan jaringan SLP dengan bobot dan bias input
 
@@ -243,16 +202,14 @@ class SLP(object):
             Nilai -1 atau 1 dalam bentuk matriks dengan setiap baris mewakili 1 huruf
         """
 
-        output = np.array([])
+        output = []
+        v_aktivasi = np.vectorize(self.aktivasi)
         for data in test_data:
             v = np.dot(data,self.weight) + self.bias
-            y = np.array([])
-            for x in v:
-                y = np.append(y, self.aktivasi(x))
+            y = v_aktivasi(v)
+            output.append(y)
 
-            output = np.append(output, y)
-
-        output.resize(self.sizeOutput,self.sizeOutput)
+        output = np.array(output)
         return output
 
     def aktivasi(self,x):
