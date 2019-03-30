@@ -265,8 +265,73 @@ class ProximityMeasure():
 # Implementasi untuk prediksi menggunakan Regresi
 class Regression():
 
-    def __init__(self):
-        pass
+    # Mean Absolute Error Evaluation
+    def meanAbsoluteError(self, y_true, y_pred):
+        """
+        :param y_true: nilai y asli, type: ndarray
+        :param y_pred: nilai y prediksi, type: ndarray
+        :return: nilai MAE
+        """
+
+        if type(y_true) or type(y_pred) is not np.ndarray:
+            y_true = np.array(y_true)
+            y_pred = np.array(y_pred)
+
+        error = abs(y_true - y_pred)
+        mae = np.mean(error)
+        return mae
+
+    # Mean Squared Error Evaluation
+    def meanSquaredError(self, y_true, y_pred):
+        """
+        :param y_true: nilai y asli, type: ndarray
+        :param y_pred: nilai y prediksi, type: ndarray
+        :return: nilai MSE
+        """
+
+        if type(y_true) or type(y_pred) is not np.ndarray:
+            y_true = np.array(y_true)
+            y_pred = np.array(y_pred)
+
+        error = (y_true - y_pred)**2
+        mse = np.mean(error)
+        return mse
+
+    # Root Mean Squared Error Evaluation
+    def rootMeanSquaredError(self, y_true, y_pred):
+        """
+        :param y_true: nilai y asli, type: ndarray
+        :param y_pred: nilai y prediksi, type: ndarray
+        :return: nilai RMSE
+        """
+
+        if type(y_true) or type(y_pred) is not np.ndarray:
+            y_true = np.array(y_true)
+            y_pred = np.array(y_pred)
+
+        error = (y_true - y_pred)**2
+        rmse = np.sqrt(np.mean(error))
+        return rmse
+
+    # Interpolasi Lagrange
+    def lagrange(self, featureX, featureY, predictX):
+        """
+        :param featureX: variable independent, type: ndarray
+        :param featureY: variable dependent / variable yang diprediksi, type: ndarray
+        :param predictX: nilai prediksi fitur x, type: int
+        :return: nilai prediksi fitur y, type: int / ndarray
+        """
+
+        # List Lagrange
+        l = []
+        for i, data in enumerate(featureX):
+            temp = np.prod((predictX - featureX[featureX != data])) / np.prod(
+                (featureX[i] - featureX[featureX != data]))
+            l.append(temp)
+
+        # l = np.array(l)
+        p = np.sum(featureY * l)
+        return p
 
     # Regresi Linier
     def linearRegression(self, featureX, featureY, n, predictX):
@@ -313,22 +378,3 @@ class Regression():
 
         yPred = b0 + b1 * predictX1 + b2 * predictX2
         return yPred
-
-    # Interpolasi Lagrange
-    def lagrange(self, featureX, featureY, predictX):
-        """
-        :param featureX: variable independent, type: ndarray
-        :param featureY: variable dependent / variable yang diprediksi, type: ndarray
-        :param predictX: nilai prediksi fitur x, type: int
-        :return: nilai prediksi fitur y, type: int / ndarray
-        """
-
-        # List Lagrange
-        l = []
-        for i, data in enumerate(featureX):
-            temp = np.prod((predictX - featureX[featureX != data])) / np.prod((featureX[i] - featureX[featureX != data]))
-            l.append(temp)
-
-        # l = np.array(l)
-        p = np.sum(featureY * l)
-        return p

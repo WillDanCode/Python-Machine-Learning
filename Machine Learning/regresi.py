@@ -25,6 +25,11 @@ plt.xlabel('Biaya Iklan')
 plt.ylabel('Tingkat Penjualan')
 plt.show()
 
+# Evaluation
+print('Mean Absolute Error      :', regresi.meanAbsoluteError(y, yPred))
+print('Mean Squared Error       :', regresi.meanSquaredError(y, yPred))
+print('Root Mean Squared Error  :', regresi.rootMeanSquaredError(y, yPred))
+
 # Prediction
 xPred = 65
 yPred = regresi.linearRegression(x, y, len(x), xPred)
@@ -60,6 +65,11 @@ plt.title('Regresi Linier Berganda')
 plt.xlabel('SAT')
 plt.ylabel('GPA')
 plt.show()
+
+# Evaluation
+print('Mean Absolute Error      :', regresi.meanAbsoluteError(data['GPA'], data['GPA Prediction']))
+print('Mean Squared Error       :', regresi.meanSquaredError(data['GPA'], data['GPA Prediction']))
+print('Root Mean Squared Error  :', regresi.rootMeanSquaredError(data['GPA'], data['GPA Prediction']))
 
 # Prediction
 xPred = np.array([(1700,0), (1670,1)])
