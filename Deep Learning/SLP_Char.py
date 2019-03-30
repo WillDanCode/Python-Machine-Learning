@@ -1,48 +1,28 @@
-from WildanNN import SLP
+from WildanNN import SLP, Helper
 import numpy as np
 from random import *
 
 print(15*'=' + ' Single Layer Perceptron Pada Pengenalan Karakter Huruf ' + 15*'=')
 
+helper = Helper()
+
 # Membaca berkas training
-berkas = open('../Dataset/Pengenalan Karakter/A.txt', 'r')
-a = berkas.read()
-berkas.close()
-
-berkas = open('../Dataset/Pengenalan Karakter/B.txt', 'r')
-b = berkas.read()
-berkas.close()
-
-berkas = open('../Dataset/Pengenalan Karakter/C.txt', 'r')
-c = berkas.read()
-berkas.close()
-
-berkas = open('../Dataset/Pengenalan Karakter/D.txt', 'r')
-d = berkas.read()
-berkas.close()
-
-berkas = open('../Dataset/Pengenalan Karakter/E.txt', 'r')
-e = berkas.read()
-berkas.close()
-
-berkas = open('../Dataset/Pengenalan Karakter/J.txt', 'r')
-j = berkas.read()
-berkas.close()
-
-berkas = open('../Dataset/Pengenalan Karakter/K.txt', 'r')
-k = berkas.read()
-berkas.close()
-
-slp = SLP()
+a = helper.bacaFile('../Dataset/Pengenalan Karakter/A.txt')
+b = helper.bacaFile('../Dataset/Pengenalan Karakter/B.txt')
+c = helper.bacaFile('../Dataset/Pengenalan Karakter/C.txt')
+d = helper.bacaFile('../Dataset/Pengenalan Karakter/D.txt')
+e = helper.bacaFile('../Dataset/Pengenalan Karakter/E.txt')
+j = helper.bacaFile('../Dataset/Pengenalan Karakter/J.txt')
+k = helper.bacaFile('../Dataset/Pengenalan Karakter/K.txt')
 
 # Mengubah pola huruf menjadi list angka bipolar
-bipolar_a = slp.polaToBipolar(a)
-bipolar_b = slp.polaToBipolar(b)
-bipolar_c = slp.polaToBipolar(c)
-bipolar_d = slp.polaToBipolar(d)
-bipolar_e = slp.polaToBipolar(e)
-bipolar_j = slp.polaToBipolar(j)
-bipolar_k = slp.polaToBipolar(k)
+bipolar_a = helper.polaToBipolar(a)
+bipolar_b = helper.polaToBipolar(b)
+bipolar_c = helper.polaToBipolar(c)
+bipolar_d = helper.polaToBipolar(d)
+bipolar_e = helper.polaToBipolar(e)
+bipolar_j = helper.polaToBipolar(j)
+bipolar_k = helper.polaToBipolar(k)
 
 # Menentukan data latih dan target
 data = [bipolar_a, bipolar_b, bipolar_c, bipolar_d, bipolar_e, bipolar_j, bipolar_k]
@@ -75,42 +55,22 @@ print('Bias: ', bias)
 # =========================== Testing =============================
 
 # Membaca berkas testing
-berkas = open('../Dataset/Pengenalan Karakter/A_test.txt', 'r')
-a_test = berkas.read()
-berkas.close()
-
-berkas = open('../Dataset/Pengenalan Karakter/B_test.txt', 'r')
-b_test = berkas.read()
-berkas.close()
-
-berkas = open('../Dataset/Pengenalan Karakter/C_test.txt', 'r')
-c_test = berkas.read()
-berkas.close()
-
-berkas = open('../Dataset/Pengenalan Karakter/D_test.txt', 'r')
-d_test = berkas.read()
-berkas.close()
-
-berkas = open('../Dataset/Pengenalan Karakter/E_test.txt', 'r')
-e_test = berkas.read()
-berkas.close()
-
-berkas = open('../Dataset/Pengenalan Karakter/J_test.txt', 'r')
-j_test = berkas.read()
-berkas.close()
-
-berkas = open('../Dataset/Pengenalan Karakter/K_test.txt', 'r')
-k_test = berkas.read()
-berkas.close()
+a_test = helper.bacaFile('../Dataset/Pengenalan Karakter/A_test.txt')
+b_test = helper.bacaFile('../Dataset/Pengenalan Karakter/B_test.txt')
+c_test = helper.bacaFile('../Dataset/Pengenalan Karakter/C_test.txt')
+d_test = helper.bacaFile('../Dataset/Pengenalan Karakter/D_test.txt')
+e_test = helper.bacaFile('../Dataset/Pengenalan Karakter/E_test.txt')
+j_test = helper.bacaFile('../Dataset/Pengenalan Karakter/J_test.txt')
+k_test = helper.bacaFile('../Dataset/Pengenalan Karakter/K_test.txt')
 
 # Mengubah pola huruf menjadi list angka bipolar
-bipolar_a_test = slp.polaToBipolar(a_test)
-bipolar_b_test = slp.polaToBipolar(b_test)
-bipolar_c_test = slp.polaToBipolar(c_test)
-bipolar_d_test = slp.polaToBipolar(d_test)
-bipolar_e_test = slp.polaToBipolar(e_test)
-bipolar_j_test = slp.polaToBipolar(j_test)
-bipolar_k_test = slp.polaToBipolar(k_test)
+bipolar_a_test = helper.polaToBipolar(a_test)
+bipolar_b_test = helper.polaToBipolar(b_test)
+bipolar_c_test = helper.polaToBipolar(c_test)
+bipolar_d_test = helper.polaToBipolar(d_test)
+bipolar_e_test = helper.polaToBipolar(e_test)
+bipolar_j_test = helper.polaToBipolar(j_test)
+bipolar_k_test = helper.polaToBipolar(k_test)
 
 # Proses testing
 data_test = [bipolar_a_test, bipolar_b_test, bipolar_c_test, bipolar_d_test, bipolar_e_test, bipolar_j_test, bipolar_k_test]

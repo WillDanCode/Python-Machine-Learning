@@ -1529,11 +1529,12 @@
       <change beforePath="$PROJECT_DIR$/Dataset/About.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Dataset/mushrooms - Copy.csv" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Dataset/mushrooms.csv" beforeDir="false" afterPath="$PROJECT_DIR$/Dataset/mushrooms.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Deep Learning/Hebb_Char.py" beforeDir="false" afterPath="$PROJECT_DIR$/Deep Learning/Hebb_Char.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Deep Learning/Hebb_Main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Deep Learning/Hebb_Main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Deep Learning/SLP_Char.py" beforeDir="false" afterPath="$PROJECT_DIR$/Deep Learning/SLP_Char.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Deep Learning/SLP_Main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Deep Learning/SLP_Main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Deep Learning/WildanNN.py" beforeDir="false" afterPath="$PROJECT_DIR$/Deep Learning/WildanNN.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Machine Learning/MyMachineLearning.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Machine Learning/regresi.py" beforeDir="false" afterPath="$PROJECT_DIR$/Machine Learning/regresi.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Percobaan.py" beforeDir="false" afterPath="$PROJECT_DIR$/Machine Learning/Percobaan.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Projek.py" beforeDir="false" afterPath="$PROJECT_DIR$/Machine Learning/Projek.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/cycler-0.10.0.dist-info/DESCRIPTION.rst" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/cycler-0.10.0.dist-info/DESCRIPTION.rst" afterDir="false" />
@@ -3541,32 +3542,14 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Deep Learning/WildanNN.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="364">
-              <caret line="218" column="16" lean-forward="true" selection-start-line="218" selection-start-column="16" selection-end-line="218" selection-end-column="16" />
+            <state relative-caret-position="2490">
+              <caret line="128" column="76" selection-start-line="128" selection-start-column="76" selection-end-line="128" selection-end-column="76" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Deep Learning/SLP_Char.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="66">
-              <caret line="112" column="15" selection-start-line="112" selection-start-column="15" selection-end-line="112" selection-end-column="15" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Deep Learning/SLP_Main.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="198">
-              <caret line="33" lean-forward="true" selection-start-line="33" selection-end-line="33" />
             </state>
           </provider>
         </entry>
@@ -3594,8 +3577,6 @@
         <option value="$PROJECT_DIR$/Deep Learning/HebbMain.py" />
         <option value="$PROJECT_DIR$/Deep Learning/HebbChar.py" />
         <option value="$PROJECT_DIR$/Dataset/mirip_o.txt" />
-        <option value="$PROJECT_DIR$/Deep Learning/Hebb_Main.py" />
-        <option value="$PROJECT_DIR$/Deep Learning/Hebb_Char.py" />
         <option value="$PROJECT_DIR$/Deep Learning/WildanNeuralNetwork.py" />
         <option value="$PROJECT_DIR$/Dataset/Pengenalan Karakter/J.txt" />
         <option value="$PROJECT_DIR$/Dataset/Pengenalan Karakter/K_test.txt" />
@@ -3618,8 +3599,11 @@
         <option value="$PROJECT_DIR$/Machine Learning/WildanML.py" />
         <option value="$PROJECT_DIR$/Machine Learning/test.py" />
         <option value="$PROJECT_DIR$/Machine Learning/regresi.py" />
+        <option value="$PROJECT_DIR$/Deep Learning/Hebb_Char.py" />
         <option value="$PROJECT_DIR$/Deep Learning/SLP_Char.py" />
+        <option value="$PROJECT_DIR$/Deep Learning/Hebb_Main.py" />
         <option value="$PROJECT_DIR$/Deep Learning/SLP_Main.py" />
+        <option value="$PROJECT_DIR$/Deep Learning/Adaline_Main.py" />
         <option value="$PROJECT_DIR$/Deep Learning/WildanNN.py" />
       </list>
     </option>
@@ -3636,6 +3620,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -3646,13 +3631,12 @@
             <path>
               <item name="Machine Learning" type="b2602c69:ProjectViewProjectNode" />
               <item name="Machine Learning" type="462c0819:PsiDirectoryNode" />
-              <item name="Machine Learning" type="462c0819:PsiDirectoryNode" />
+              <item name="Deep Learning" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -3685,7 +3669,49 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.SLP_Char">
+  <component name="RunManager" selected="Python.Adaline_Main">
+    <configuration name="Adaline_Main" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Machine Learning" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Deep Learning" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Deep Learning/Adaline_Main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Hebb_Main" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Machine Learning" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Deep Learning" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Deep Learning/Hebb_Main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="SLP_Char" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Machine Learning" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -3749,55 +3775,13 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="regresi (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="Machine Learning" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Machine Learning" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Machine Learning/regresi.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="Machine Learning" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Machine Learning" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Machine Learning/test.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.SLP_Char" />
-        <item itemvalue="Python.SLP_Main" />
-        <item itemvalue="Python.regresi (1)" />
-        <item itemvalue="Python.test" />
+        <item itemvalue="Python.Adaline_Main" />
         <item itemvalue="Python.WildanNN" />
+        <item itemvalue="Python.SLP_Main" />
+        <item itemvalue="Python.SLP_Char" />
+        <item itemvalue="Python.Hebb_Main" />
       </list>
     </recent_temporary>
   </component>
@@ -3866,22 +3850,11 @@
     </layout-to-restore>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Dataset/Pengenalan Karakter/K2.txt" />
     <entry file="file://$PROJECT_DIR$/Dataset/Pengenalan Karakter/X.txt">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/Dataset/Pengenalan Karakter/O.txt">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Deep Learning/Hebb_Main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="726">
-          <caret line="36" column="25" lean-forward="true" selection-start-line="36" selection-start-column="25" selection-end-line="36" selection-end-column="25" />
-          <folding>
-            <element signature="e#0#36#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../../../Semester 6/SEMESTER VI/ARTIFICIAL NEURAL NETWORK/perceptron.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -4082,16 +4055,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Deep Learning/Hebb_Char.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-692">
-          <caret line="3" column="73" lean-forward="true" selection-start-line="3" selection-end-line="3" selection-end-column="73" />
-          <folding>
-            <element signature="e#0#25#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Dataset/Pengenalan Karakter/K.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="44">
@@ -4113,16 +4076,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Machine Learning/test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="9" column="10" lean-forward="true" selection-end-line="9" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/Machine Learning/test.py" />
     <entry file="file://$PROJECT_DIR$/Machine Learning/regresi.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="615">
+        <state relative-caret-position="1782">
           <caret line="90" column="10" lean-forward="true" selection-start-line="90" selection-start-column="10" selection-end-line="90" selection-end-column="10" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
@@ -4130,27 +4087,60 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Deep Learning/SLP_Main.py">
+    <entry file="file://$PROJECT_DIR$/Deep Learning/Hebb_Char.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="33" lean-forward="true" selection-start-line="33" selection-end-line="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Deep Learning/WildanNN.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="364">
-          <caret line="218" column="16" lean-forward="true" selection-start-line="218" selection-start-column="16" selection-end-line="218" selection-end-column="16" />
+        <state relative-caret-position="132">
+          <caret line="39" column="24" selection-start-line="39" selection-start-column="24" selection-end-line="39" selection-end-column="24" />
           <folding>
-            <element signature="e#0#18#0" expanded="true" />
+            <element signature="e#0#25#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Deep Learning/SLP_Char.py">
       <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-858">
+          <caret lean-forward="true" />
+          <folding>
+            <element signature="e#0#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Deep Learning/Hebb_Main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="572">
+          <caret line="27" column="23" selection-start-line="27" selection-start-column="23" selection-end-line="27" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Deep Learning/SLP_Main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="27" column="22" selection-start-line="27" selection-start-column="22" selection-end-line="27" selection-end-column="22" />
+          <folding>
+            <element signature="e#0#24#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Deep Learning/Adaline_Main.py">
+      <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="66">
-          <caret line="112" column="15" selection-start-line="112" selection-start-column="15" selection-end-line="112" selection-end-column="15" />
+          <caret line="3" column="58" lean-forward="true" selection-start-line="3" selection-start-column="58" selection-end-line="3" selection-end-column="58" />
+          <folding>
+            <element signature="e#0#28#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Deep Learning/WildanNN.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2490">
+          <caret line="128" column="76" selection-start-line="128" selection-start-column="76" selection-end-line="128" selection-end-column="76" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

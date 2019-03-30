@@ -7,7 +7,142 @@ import matplotlib.pyplot as plt
 Library yang dibuat untuk kebutuhan Artificial Neural Network
 """
 
-#Implementasi jaringan Hebb
+# Implementasi jaringan Adaline (Delta Rule)
+class Adaline(object):
+
+    def __init__(self, sizeInput=2, sizeOutput=1, alpha=0.1, threshold=0.1):
+        """
+        Inisialisasi bobot dan bias awal dengan nilai acak
+
+        :param sizeInput: int
+            Banyaknya input neuron pada jaringan Adaline. Harus sesuai dengan banyaknya parameter (fitur pada data latih)
+        :param sizeOutput: int
+            Banyaknya output neuron pada jaringan Adaline
+        :param alpha: float 0.1 <= sizeInput*alpha <= 1
+            Nilai learning rate
+        :param threshold: float
+            Nilai ambang batas
+        :return: None
+        """
+
+        self.sizeInput = sizeInput
+        self.sizeOutput = sizeOutput
+        self.alpha = alpha
+        self.threshold = threshold
+        self.weight = np.random.random(sizeInput)
+        self.bias = np.random.random()
+        self.target_is_bipolar = False
+
+    def aktivasi_biner(self,x):
+        """
+        Fungsi aktivasi step function jika target biner
+
+        :param x: int64
+            Nilai yang akan dicari output aktivasinya
+        :return: int64
+            Bilangan 0 atau 1 sesuai dengan kondisi if
+        """
+
+        if x < 0:
+            return 0
+        else:
+            return 1
+
+    def aktivasi_bipolar(self,x):
+        """
+        Fungsi aktivasi step function jika target bipolar
+
+        :param x: int64
+            Nilai yang akan dicari output aktivasinya
+        :return: int64
+            Bilangan -1 atau 1 sesuai dengan kondisi if
+        """
+
+        if x < 0:
+            return -1
+        else:
+            return 1
+
+    def getBias(self):
+        """
+        Mendapatkan bias jaringan Adaline setelah proses training
+
+        :return: bias
+            Nilai bias
+        """
+
+        return self.bias
+
+    def getWeight(self):
+        """
+        Mendapatkan bobot jaringan Adaline setelah proses training
+
+        :return: weight
+            Nilai bobot
+        """
+
+        return self.weight
+
+    def getWeightBias(self):
+        """
+        Mendapatkan bobot dan bias jaringan Adaline setelah proses training
+
+        :return: weight,bias
+            Nilai bobot dan bias
+        """
+
+        return self.weight,self.bias
+
+    def train(self,train_data,train_target):
+        """
+        Proses pelatihan jaringan Adaline
+
+        :param train_data: matriks angka bipolar {-1, 1}
+            Kumpulan data latih
+        :param train_target: list angka bipolar {-1, 1} atau angka biner {0, 1}
+            Kumpulan target yang sesuai dengan data latih
+        :return: None
+        """
+
+        max_error = self.threshold
+
+        # Cek apakah target berupa bipolar atau bukan
+        if np.array_equiv(np.sort(np.unique(train_target)),[-1,1]) is True:
+            self.target_is_bipolar = True
+        else:
+            self.target_is_bipolar = False
+
+        while max_error >= self.threshold:
+            max_error = 0
+            for data,target in zip(train_data,train_target):
+                y = v = np.dot(self.weight,data) + self.bias
+                delta_w = self.alpha * (target-y) * data
+                self.weight = self.weight + delta_w
+                self.bias = self.bias + self.alpha * (target-y)
+                max_error = np.max(np.append(delta_w,max_error))
+
+    def test(self,test_data):
+        """
+        Mendapatkan output dari satu data uji menggunakan jaringan Adaline dengan bobot dan bias input
+
+        :param test_data: Matriks (list of list) int64
+            Data yang akan ditentukan outputnya menggunakan jaringan Adaline
+        :return: List of float
+            Nilai -1 atau 1 dalam bentuk list
+        """
+
+        output = np.array([])
+        for data in test_data:
+            v = np.dot(self.weight, data) + self.bias
+            if self.target_is_bipolar is True:
+                y = self.aktivasi_bipolar(v)
+            else:
+                y = self.aktivasi_biner(v)
+            output = np.append(output, y)
+
+        return output
+
+# Implementasi jaringan Hebb
 class Hebb(object):
 
     def __init__(self,size=2):
@@ -22,6 +157,51 @@ class Hebb(object):
         self.bias = 0
         # Panjang list weight harus sama dengan banyaknya neuron input
         self.weight = np.zeros(size)
+
+    def aktivasi(self,x):
+        """
+        Fungsi aktivasi step function dengan output bipolar
+
+        :param x: int64
+            Nilai yang akan dicari output aktivasinya
+        :return: int64
+            Bilangan -1 atau 1 sesuai dengan kondisi if
+        """
+
+        if x < 0:
+            return -1
+        else:
+            return 1
+
+    def getBias(self):
+        """
+        Mendapatkan bias jaringan Hebb setelah proses training
+
+        :return: bias
+            Nilai bias
+        """
+
+        return self.bias
+
+    def getWeight(self):
+        """
+        Mendapatkan bobot jaringan Hebb setelah proses training
+
+        :return: weight
+            Nilai bobot
+        """
+
+        return self.weight
+
+    def getWeightBias(self):
+        """
+        Mendapatkan bobot dan bias jaringan Hebb setelah proses training
+
+        :return: weight,bias
+            Nilai bobot dan bias
+        """
+
+        return self.weight,self.bias
 
     def train(self,train_data,train_target):
         """
@@ -40,21 +220,6 @@ class Hebb(object):
             self.weight = self.weight + data * target
             # b (baru) = b (lama) + target
             self.bias = self.bias + target
-
-    def aktivasi(self,x):
-        """
-        Fungsi aktivasi step function dengan output bipolar
-
-        :param x: int64
-            Nilai yang akan dicari output aktivasinya
-        :return: int64
-            Bilangan -1 atau 1 sesuai dengan kondisi if
-        """
-
-        if x < 0:
-            return -1
-        else:
-            return 1
 
     def test(self,test_data):
         """
@@ -75,35 +240,13 @@ class Hebb(object):
 
         return output
 
-    def getWeightBias(self):
-        """
-        Mendapatkan bobot dan bias jaringan Hebb setelah proses training
+class Helper():
 
-        :return: weight,bias
-            Nilai bobot dan bias
-        """
-
-        return self.weight,self.bias
-
-    def getWeight(self):
-        """
-        Mendapatkan bobot jaringan Hebb setelah proses training
-
-        :return: weight
-            Nilai bobot
-        """
-
-        return self.weight
-
-    def getBias(self):
-        """
-        Mendapatkan bias jaringan Hebb setelah proses training
-
-        :return: bias
-            Nilai bias
-        """
-
-        return self.bias
+    def bacaFile(self, pathFile):
+        berkas = open(pathFile, 'r')
+        isi = berkas.read()
+        berkas.close()
+        return isi
 
     def polaToBipolar(self, pola):
         """
@@ -145,6 +288,53 @@ class SLP(object):
         self.threshold = threshold
         self.weight = np.zeros((sizeInput, sizeOutput))
         self.bias = np.zeros(sizeOutput)
+
+    def aktivasi(self,x):
+        """
+        Fungsi aktivasi step function dengan output bipolar
+
+        :param x: int64
+            Nilai yang akan dicari output aktivasinya
+        :return: int64
+            Bilangan -1 atau 1 sesuai dengan kondisi if
+        """
+
+        if x > self.threshold:
+            return 1
+        if x < -self.threshold:
+            return -1
+        else:
+            return 0
+
+    def getBias(self):
+        """
+        Mendapatkan bias jaringan SLP setelah proses training
+
+        :return: bias
+            Nilai bias
+        """
+
+        return self.bias
+
+    def getWeight(self):
+        """
+        Mendapatkan bobot jaringan SLP setelah proses training
+
+        :return: weight
+            Nilai bobot
+        """
+
+        return self.weight
+
+    def getWeightBias(self):
+        """
+        Mendapatkan bobot dan bias jaringan SLP setelah proses training
+
+        :return: weight,bias
+            Nilai bobot dan bias
+        """
+
+        return self.weight,self.bias
 
     def train(self,train_data,train_target):
         """
@@ -211,66 +401,3 @@ class SLP(object):
 
         output = np.array(output)
         return output
-
-    def aktivasi(self,x):
-        """
-        Fungsi aktivasi step function dengan output bipolar
-
-        :param x: int64
-            Nilai yang akan dicari output aktivasinya
-        :return: int64
-            Bilangan -1 atau 1 sesuai dengan kondisi if
-        """
-
-        if x > self.threshold:
-            return 1
-        if x < -self.threshold:
-            return -1
-        else:
-            return 0
-
-    def getWeightBias(self):
-        """
-        Mendapatkan bobot dan bias jaringan SLP setelah proses training
-
-        :return: weight,bias
-            Nilai bobot dan bias
-        """
-
-        return self.weight,self.bias
-
-    def getWeight(self):
-        """
-        Mendapatkan bobot jaringan SLP setelah proses training
-
-        :return: weight
-            Nilai bobot
-        """
-
-        return self.weight
-
-    def getBias(self):
-        """
-        Mendapatkan bias jaringan SLP setelah proses training
-
-        :return: bias
-            Nilai bias
-        """
-
-        return self.bias
-
-    def polaToBipolar(self, pola):
-        """
-        Mengubah pola-pola huruf menjadi sebuah list bipolar
-
-        :param pola: txt pola
-            Pola huruf yang akan digunakan untuk pengenalan karakter
-        :return: list of float
-            List yang berisi bilangan bipolar hasil replace
-        """
-
-        pola = pola.replace("#", "1,")
-        pola = pola.replace(".", "-1,")
-        pola = pola.replace("\n", '')
-        angka = np.fromstring(pola[:-1], dtype=int, sep=',')
-        return angka

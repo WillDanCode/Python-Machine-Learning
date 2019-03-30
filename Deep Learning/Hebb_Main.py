@@ -3,8 +3,6 @@ import numpy as np
 
 print(15*'=' + ' Hebb Learning Pada Fungsi Logika ' + 15*'=')
 
-hebb = Hebb(2)
-
 # AND
 data = np.array([[-1,-1],
                  [-1,1],
@@ -26,10 +24,10 @@ target = np.array([-1, -1, -1, 1])
 #                  [1,1]])
 # target = np.array([-1, 1, 1, -1])
 
+hebb = Hebb(2)
 hebb.train(data,target)
-
-weight, bias = hebb.getWeightBias()
-print('Weight: ', weight)
+bobot, bias = hebb.getWeightBias()
+print('Bobot: ', bobot)
 print('Bias: ', bias)
 
 test = hebb.test(data)
