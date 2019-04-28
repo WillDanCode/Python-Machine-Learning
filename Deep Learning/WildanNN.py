@@ -142,6 +142,32 @@ class Adaline(object):
 
         return output
 
+# Implementasi untuk perhitungan distance
+class Distance():
+
+    def __init__(self):
+        pass
+
+    # Manhattan distance
+    def manhattan(self, data1, data2):
+        hasil = np.sum(np.abs(data1 - data2))
+        return hasil
+
+    # Euclidean distance
+    def euclidean(self, data1, data2):
+        hasil = np.sqrt(np.sum((data1 - data2)**2))
+        return hasil
+
+    # Minkowski distance
+    def minkowski(self, data1, data2, jumlahAtribut):
+        hasil = np.power(np.sum(np.abs(data1 - data2) ** jumlahAtribut), 1/jumlahAtribut)
+        return hasil
+
+    # Supremum distance
+    def supremum(self, data1, data2):
+        hasil = np.max(np.abs(data1 - data2))
+        return hasil
+
 # Implementasi jaringan Hebb
 class Hebb(object):
 
@@ -263,6 +289,71 @@ class Helper():
         pola = pola.replace("\n", '')
         angka = np.fromstring(pola[:-1], dtype=int, sep=',')
         return angka
+
+# Implementasi jaringan Learning Vector Quantization
+class LVQ(object):
+
+    def __init__(self, sizeInput, sizeOutput, max_epoch, alpha=0.1, threshold=0.01):
+        self.sizeInput = sizeInput
+        self.sizeOutput = sizeOutput
+        self.max_epoch = max_epoch
+        self.alpha = alpha
+        self.threshold = threshold
+        self.weight = np.zeros((sizeOutput, sizeInput))
+
+    def getWeight(self):
+        """
+        Mendapatkan bobot jaringan LVQ setelah proses training
+
+        :return: weight
+            Nilai bobot
+        """
+
+        return self.weight
+
+    def train(self,train_data,train_target):
+
+        weight_label, label_index = np.unique(train_target, True)
+        # print(weight_label)
+        # print(label_index)
+        # Inisialisasi bobot
+        self.weight = train_data[label_index].astype(np.float)
+        # Hapus data yang digunakan untuk inisialisasi bobot
+        train_data = np.delete(train_data, label_index, axis=0)
+        train_target = np.delete(train_target, label_index, axis=0)
+
+        epoch = 0
+        iterasi = 0
+        while epoch <= self.max_epoch:
+            epoch += 1
+            # print('\nEpoch', epoch)
+            for data, target in zip(train_data, train_target):
+                iterasi += 1
+                # print('Iterasi', iterasi)
+                distance = np.sqrt(np.sum((data - self.weight) ** 2, axis=1))
+                idx_min = np.argmin(distance)
+                # print(distance, idx_min)
+
+                if target == weight_label[idx_min]:
+                    self.weight[idx_min] = self.weight[idx_min] + self.alpha * (data - self.weight[idx_min])
+                else:
+                    self.weight[idx_min] = self.weight[idx_min] - self.alpha * (data - self.weight[idx_min])
+
+            self.alpha = self.alpha * (1 - epoch / self.max_epoch)
+
+        # print('Bobot Sesudah:', self.weight)
+        weight_class = (self.weight, weight_label)
+        return weight_class
+
+    def test(self, test_data, weight_class):
+        weight, label = weight_class
+        output = []
+        for data in test_data:
+            distance = np.sqrt(np.sum((data - self.weight) ** 2, axis=1))
+            idx_min = np.argmin(distance)
+            output.append(label[idx_min])
+
+        return output
 
 # Implementasi jaringan Single Layer Perceptron
 class SLP(object):
