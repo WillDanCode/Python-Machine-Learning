@@ -1,0 +1,16 @@
+Deskripsi file :
+
+train.csv : Data train berupa 3293 data dengan 17 variabel 
+test_data.csv : Data test berupa 824 data dengan 16 variabel 
+samplesSubmission.csv : contoh file hasil prediksi 
+
+Penjelasan variabel : 
+Id : id kost 
+fac_ 1 - fac_8 : fasilitas kost. Nilai 0 berarti tidak ada fasilitas, nilai 1 berarti ada fasilitas. 
+poi_1 : jarak ke POI 1 
+poi_2 : jarak ke POI 2 
+poi_3 : jarak ke POI 3 
+size : luas kamar 
+room_count : jumlah kamar 
+total_call : jumlah pencarian ke kost tersebut 
+gender : jenis gender yang ditampung oleh kost tersebut 
