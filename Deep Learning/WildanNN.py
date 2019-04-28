@@ -293,7 +293,17 @@ class Helper():
 # Implementasi jaringan Learning Vector Quantization
 class LVQ(object):
 
-    def __init__(self, sizeInput, sizeOutput, max_epoch, alpha=0.1, threshold=0.01, version='1'):
+    def __init__(self, sizeInput, sizeOutput, max_epoch, alpha=np.random.random(), threshold=np.random.random(), version='1'):
+        """
+        Inisialisasi class (constructor)
+        :param sizeInput (int): Banyaknya input neuron sesuai dengan banyaknya parameter (fitur pada data latih)
+        :param sizeOutput (int): Banyaknya output neuron sesuai dengan banyaknya label (kelas pada data latih)
+        :param max_epoch (int): Maksimal epoch yang diizinkan
+        :param alpha (float): learning rate
+        :param threshold (float): nilai ambang batas
+        :param version (string): versi dari jaringan LVQ. Bisa diisi dengan '1', '2', '2.1', '3'
+        """
+
         self.sizeInput = sizeInput
         self.sizeOutput = sizeOutput
         self.max_epoch = max_epoch
@@ -306,13 +316,18 @@ class LVQ(object):
         """
         Mendapatkan bobot jaringan LVQ setelah proses training
 
-        :return: weight
-            Nilai bobot
+        :return: weight (nilai bobot)
         """
 
         return self.weight
 
     def train(self,train_data,train_target):
+        """
+        Proses pelatihan jaringan LVQ
+        :param train_data (numpy array): Matriks yang berisi data latih
+        :param train_target (numpy array): Array yang berisi label dari data latih
+        :return: bobot dan label dari bobot
+        """
 
         weight_label, label_index = np.unique(train_target, True)
         # print(weight_label)
@@ -368,7 +383,7 @@ class LVQ(object):
 
                 elif self.version == '3':
                     self.threshold = 0.2
-                    m = 0.3 #harusnya angkanya random 0.1 < m < 0.5
+                    m = np.random.uniform(0.1, 0.5)
                     beta = m * self.alpha
                     if (min_distance > (1-self.threshold) * (1+self.threshold)):
                         if (weight_label[idx_winner] != weight_label[idx_runnerUp]):
@@ -392,11 +407,17 @@ class LVQ(object):
 
             self.alpha = self.alpha * (1 - epoch / self.max_epoch)
 
-        # print('Bobot Sesudah:', self.weight)
         weight_class = (self.weight, weight_label)
         return weight_class
 
     def test(self, test_data, weight_class):
+        """
+        Proses pengujian jaringan LVQ
+        :param test_data (numpy array atau pandas dataframe): Matriks yang berisi data uji
+        :param weight_class (tuple): Tuple yang berisi pasangan bobot dan labelnya
+        :return: Nilai prediksi label/class
+        """
+
         weight, label = weight_class
         output = []
         for data in test_data:
