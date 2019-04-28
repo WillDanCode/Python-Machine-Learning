@@ -293,12 +293,13 @@ class Helper():
 # Implementasi jaringan Learning Vector Quantization
 class LVQ(object):
 
-    def __init__(self, sizeInput, sizeOutput, max_epoch, alpha=0.1, threshold=0.01):
+    def __init__(self, sizeInput, sizeOutput, max_epoch, alpha=0.1, threshold=0.01, version='1'):
         self.sizeInput = sizeInput
         self.sizeOutput = sizeOutput
         self.max_epoch = max_epoch
         self.alpha = alpha
         self.threshold = threshold
+        self.version = version
         self.weight = np.zeros((sizeOutput, sizeInput))
 
     def getWeight(self):
@@ -332,12 +333,62 @@ class LVQ(object):
                 # print('Iterasi', iterasi)
                 distance = np.sqrt(np.sum((data - self.weight) ** 2, axis=1))
                 idx_min = np.argmin(distance)
-                # print(distance, idx_min)
+                idx_sort = np.argsort(distance)
+                idx_winner, idx_runnerUp = idx_sort[0], idx_sort[1]
+                min_distance = min(distance[idx_winner]/distance[idx_runnerUp], distance[idx_runnerUp]/distance[idx_winner])
+                max_distance = max(distance[idx_winner]/distance[idx_runnerUp], distance[idx_runnerUp]/distance[idx_winner])
+                # print(distance, idx_sort)
 
-                if target == weight_label[idx_min]:
-                    self.weight[idx_min] = self.weight[idx_min] + self.alpha * (data - self.weight[idx_min])
+                if self.version == '2':
+                    if (
+                        (weight_label[idx_winner] != weight_label[idx_runnerUp]) and
+                        (target == weight_label[idx_runnerUp])
+                    ):
+                        self.weight[idx_winner] = self.weight[idx_winner] - self.alpha * (data - self.weight[idx_winner])
+                        self.weight[idx_runnerUp] = self.weight[idx_runnerUp] + self.alpha * (data - self.weight[idx_runnerUp])
+                    else:
+                        if target == weight_label[idx_min]:
+                            self.weight[idx_min] = self.weight[idx_min] + self.alpha * (data - self.weight[idx_min])
+                        else:
+                            self.weight[idx_min] = self.weight[idx_min] - self.alpha * (data - self.weight[idx_min])
+
+                elif self.version == '2.1':
+                    self.threshold = 0.35
+                    if (
+                        (target == weight_label[idx_winner] or target == weight_label[idx_runnerUp]) and
+                        (min_distance > 1-self.threshold and max_distance < 1+self.threshold)
+                    ):
+                        self.weight[idx_winner] = self.weight[idx_winner] + self.alpha * (data - self.weight[idx_winner])
+                        self.weight[idx_runnerUp] = self.weight[idx_runnerUp] - self.alpha * (data - self.weight[idx_runnerUp])
+                    else:
+                        if target == weight_label[idx_min]:
+                            self.weight[idx_min] = self.weight[idx_min] + self.alpha * (data - self.weight[idx_min])
+                        else:
+                            self.weight[idx_min] = self.weight[idx_min] - self.alpha * (data - self.weight[idx_min])
+
+                elif self.version == '3':
+                    self.threshold = 0.2
+                    m = 0.3 #harusnya angkanya random 0.1 < m < 0.5
+                    beta = m * self.alpha
+                    if (min_distance > (1-self.threshold) * (1+self.threshold)):
+                        if (weight_label[idx_winner] != weight_label[idx_runnerUp]):
+                            if (target == weight_label[idx_winner] or target == weight_label[idx_runnerUp]):
+                                self.weight[idx_winner] = self.weight[idx_winner] + self.alpha * (data - self.weight[idx_winner])
+                                self.weight[idx_runnerUp] = self.weight[idx_runnerUp] - self.alpha * (data - self.weight[idx_runnerUp])
+                        else:
+                            self.weight[idx_winner] = self.weight[idx_winner] + beta * (data - self.weight[idx_winner])
+                            self.weight[idx_runnerUp] = self.weight[idx_runnerUp] + beta * (data - self.weight[idx_runnerUp])
+                    else:
+                        if target == weight_label[idx_min]:
+                            self.weight[idx_min] = self.weight[idx_min] + self.alpha * (data - self.weight[idx_min])
+                        else:
+                            self.weight[idx_min] = self.weight[idx_min] - self.alpha * (data - self.weight[idx_min])
+
                 else:
-                    self.weight[idx_min] = self.weight[idx_min] - self.alpha * (data - self.weight[idx_min])
+                    if target == weight_label[idx_min]:
+                        self.weight[idx_min] = self.weight[idx_min] + self.alpha * (data - self.weight[idx_min])
+                    else:
+                        self.weight[idx_min] = self.weight[idx_min] - self.alpha * (data - self.weight[idx_min])
 
             self.alpha = self.alpha * (1 - epoch / self.max_epoch)
 

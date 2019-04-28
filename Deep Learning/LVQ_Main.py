@@ -35,7 +35,7 @@ target = np.array([1, 2, 2, 1, 2])
 n_input = len(data[0])
 n_output = len(np.unique(target))
 
-lvq = LVQ(sizeInput=n_input, sizeOutput=n_output, max_epoch=5)
+lvq = LVQ(sizeInput=n_input, sizeOutput=n_output, max_epoch=5, version='1')
 bobot_dan_label = lvq.train(data, target)
 bobot = lvq.getWeight()
 print('Bobot: ', bobot)
