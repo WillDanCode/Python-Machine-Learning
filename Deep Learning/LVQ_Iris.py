@@ -28,5 +28,4 @@ print('Bobot: ', bobot)
 y_pred = lvq.test(np.array(x_test), bobot_dan_label)
 # print('Label Pred: ', y_pred)
 # print('Label True: ', y_test)
-
 print('Accuracy:', accuracy_score(y_test, y_pred))

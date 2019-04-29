@@ -355,9 +355,12 @@ class LVQ(object):
                 # print(distance, idx_sort)
 
                 if self.version == '2':
+                    self.threshold = 0.35
                     if (
                         (weight_label[idx_winner] != weight_label[idx_runnerUp]) and
-                        (target == weight_label[idx_runnerUp])
+                        (target == weight_label[idx_runnerUp] and
+                        (distance[idx_winner]/distance[idx_runnerUp] > 1-self.threshold and
+                         distance[idx_runnerUp]/distance[idx_winner] < 1+self.threshold))
                     ):
                         self.weight[idx_winner] = self.weight[idx_winner] - self.alpha * (data - self.weight[idx_winner])
                         self.weight[idx_runnerUp] = self.weight[idx_runnerUp] + self.alpha * (data - self.weight[idx_runnerUp])
