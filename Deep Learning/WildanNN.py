@@ -330,10 +330,11 @@ class LVQ(object):
         """
 
         weight_label, label_index = np.unique(train_target, True)
-        # print(weight_label)
-        # print(label_index)
+        print(weight_label)
+        print(label_index)
         # Inisialisasi bobot
         self.weight = train_data[label_index].astype(np.float)
+        # print(self.weight)
         # Hapus data yang digunakan untuk inisialisasi bobot
         train_data = np.delete(train_data, label_index, axis=0)
         train_target = np.delete(train_target, label_index, axis=0)
@@ -566,4 +567,116 @@ class SLP(object):
             output.append(y)
 
         output = np.array(output)
+        return output
+
+# Implementasi jaringan Self Organizing Map
+class SOM(object):
+
+    def __init__(self, sizeInput, sizeOutput, max_epoch, ordering=2, radius=0, alpha=np.random.random(), beta=np.random.random(), architecture='linear'):
+        """
+        Inisialisasi class (constructor)
+        :param sizeInput (int): Banyaknya input neuron sesuai dengan banyaknya parameter (fitur pada data latih)
+        :param sizeOutput (int): Banyaknya output neuron sesuai dengan banyaknya label (kelas pada data latih)
+        :param max_epoch (int): Maksimal epoch yang diizinkan
+        :param ordering (int) : epoch ordering (epoch yang dilakukan proses ordering phase), berupa kelipatan epoch yang nantinya akan terus mengurangi radius
+        :param radius (int) : radius / jarak ketetanggaan
+        :param alpha (float): learning rate
+        :param threshold (float): nilai ambang batas
+        :param architecture (string): arsitektur dari jaringan SOM. Bisa diisi dengan 'linear', 'rectangle', 'hexagon'
+        """
+
+        self.sizeInput = sizeInput
+        self.sizeOutput = sizeOutput
+        self.max_epoch = max_epoch
+        self.ordering = ordering
+        self.radius = radius
+        self.alpha = alpha
+        self.beta = beta
+        self.architecture = architecture
+        self.weight = np.random.random((sizeOutput, sizeInput))
+
+    def getWeight(self):
+        """
+        Mendapatkan bobot jaringan SOM setelah proses training
+
+        :return: weight (nilai bobot)
+        """
+
+        return self.weight
+
+    def train(self,train_data):
+        """
+        Proses pelatihan jaringan SOM
+        :param train_data (numpy array): Matriks yang berisi data latih
+        :return: label dari bobot
+        """
+
+        epoch = 0
+        iterasi = 0
+        while epoch <= self.max_epoch:
+            epoch += 1
+            # print('\nEpoch', epoch)
+
+            if epoch % self.ordering == 0 and self.radius != 0:
+                self.radius -= 1
+
+            for data in train_data:
+                iterasi += 1
+                print('Iterasi', iterasi)
+                distance = np.sqrt(np.sum((data - self.weight) ** 2, axis=1))
+                # print(data - self.weight)
+                idx_min = np.argmin(distance)
+
+                if self.radius > 0:
+                    # Update bobot pemenang
+                    self.weight[idx_min] = self.weight[idx_min] + self.alpha * (data - self.weight[idx_min])
+
+                    # Update bobot tetangga
+                    if self.architecture == 'rectangle':
+                        # Restruktur Neuron Output
+                        sizeOutput = np.sqrt(self.sizeOutput)
+                        while sizeOutput**2 != self.sizeOutput:
+                            self.sizeOutput += 1
+                            sizeOutput = np.sqrt(self.sizeOutput)
+                        weight = self.weight.reshape((sizeOutput, sizeOutput, self.sizeInput))
+
+                        # Convert indeks pemenang menjadi biner
+                        idx_min = np.binary_repr(int(idx_min))
+
+                        # Update bobot
+
+
+
+                    elif self.architecture == 'hexagon':
+                        pass
+
+                    else:
+                        # Tetangga atas (indeks tetangga sebelum indeks pemenang)
+                        self.weight[idx_min-self.radius:idx_min] = self.weight[idx_min-self.radius:idx_min] + self.alpha * (data - self.weight[idx_min-self.radius:idx_min])
+                        # Tetangga bawah (indeks tetangga setelah indeks pemenang)
+                        self.weight[idx_min+1:idx_min+self.radius] = self.weight[idx_min+1:idx_min+self.radius] + self.alpha * (data - self.weight[idx_min+1:idx_min+self.radius])
+
+                elif self.radius == 0:
+                    self.weight[idx_min] = self.weight[idx_min] + self.alpha * (data - self.weight[idx_min])
+
+                else:
+                    print('Radius harus >= 0')
+                    break
+
+            self.alpha *= self.beta
+
+
+    def test(self, test_data):
+        """
+        Proses pengujian jaringan SOM
+        :param test_data (numpy array atau pandas dataframe): Matriks yang berisi data uji
+        :return: Nilai prediksi label/class
+        """
+
+        output = []
+        for data in test_data:
+            distance = np.sqrt(np.sum((data - self.weight) ** 2, axis=1))
+            idx_min = np.argmin(distance)
+            output.append(idx_min)
+
         return output

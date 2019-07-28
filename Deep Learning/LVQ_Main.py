@@ -30,7 +30,7 @@ data = np.array([[1,1,0,0],
                  [0,0,1,1],
                  [1,0,0,0],
                  [0,1,1,0]])
-target = np.array([1, 2, 2, 1, 2])
+target = np.array([1, 1, 2, 1, 2])
 
 n_input = len(data[0])
 n_output = len(np.unique(target))
