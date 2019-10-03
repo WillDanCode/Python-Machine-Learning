@@ -142,6 +142,147 @@ class Adaline(object):
 
         return output
 
+# Implementasi jaringan Backpropagation
+class Backpropagation(object):
+
+    def __init__(self, sizeInput, sizeOutput, max_epoch, alpha=np.random.random(), threshold=np.random.random(), version='1'):
+        """
+        Inisialisasi class (constructor)
+        :param sizeInput (int): Banyaknya input neuron sesuai dengan banyaknya parameter (fitur pada data latih)
+        :param sizeOutput (int): Banyaknya output neuron sesuai dengan banyaknya label (kelas pada data latih)
+        :param max_epoch (int): Maksimal epoch yang diizinkan
+        :param alpha (float): learning rate
+        :param threshold (float): nilai ambang batas
+        :param version (string): versi dari jaringan LVQ. Bisa diisi dengan '1', '2', '2.1', '3'
+        """
+
+        self.sizeInput = sizeInput
+        self.sizeOutput = sizeOutput
+        self.max_epoch = max_epoch
+        self.alpha = alpha
+        self.threshold = threshold
+        self.version = version
+        self.weight = np.zeros((sizeOutput, sizeInput))
+
+    def getWeight(self):
+        """
+        Mendapatkan bobot jaringan LVQ setelah proses training
+
+        :return: weight (nilai bobot)
+        """
+
+        return self.weight
+
+    def train(self,train_data,train_target):
+        """
+        Proses pelatihan jaringan LVQ
+        :param train_data (numpy array): Matriks yang berisi data latih
+        :param train_target (numpy array): Array yang berisi label dari data latih
+        :return: bobot dan label dari bobot
+        """
+
+        weight_label, label_index = np.unique(train_target, True)
+        print(weight_label)
+        print(label_index)
+        # Inisialisasi bobot
+        self.weight = train_data[label_index].astype(np.float)
+        # print(self.weight)
+        # Hapus data yang digunakan untuk inisialisasi bobot
+        train_data = np.delete(train_data, label_index, axis=0)
+        train_target = np.delete(train_target, label_index, axis=0)
+
+        epoch = 0
+        iterasi = 0
+        while epoch <= self.max_epoch:
+            epoch += 1
+            # print('\nEpoch', epoch)
+            for data, target in zip(train_data, train_target):
+                iterasi += 1
+                # print('Iterasi', iterasi)
+                distance = np.sqrt(np.sum((data - self.weight) ** 2, axis=1))
+                idx_min = np.argmin(distance)
+                idx_sort = np.argsort(distance)
+                idx_winner, idx_runnerUp = idx_sort[0], idx_sort[1]
+                min_distance = min(distance[idx_winner]/distance[idx_runnerUp], distance[idx_runnerUp]/distance[idx_winner])
+                max_distance = max(distance[idx_winner]/distance[idx_runnerUp], distance[idx_runnerUp]/distance[idx_winner])
+                # print(distance, idx_sort)
+
+                if self.version == '2':
+                    self.threshold = 0.35
+                    if (
+                        (weight_label[idx_winner] != weight_label[idx_runnerUp]) and
+                        (target == weight_label[idx_runnerUp] and
+                        (distance[idx_winner]/distance[idx_runnerUp] > 1-self.threshold and
+                         distance[idx_runnerUp]/distance[idx_winner] < 1+self.threshold))
+                    ):
+                        self.weight[idx_winner] = self.weight[idx_winner] - self.alpha * (data - self.weight[idx_winner])
+                        self.weight[idx_runnerUp] = self.weight[idx_runnerUp] + self.alpha * (data - self.weight[idx_runnerUp])
+                    else:
+                        if target == weight_label[idx_min]:
+                            self.weight[idx_min] = self.weight[idx_min] + self.alpha * (data - self.weight[idx_min])
+                        else:
+                            self.weight[idx_min] = self.weight[idx_min] - self.alpha * (data - self.weight[idx_min])
+
+                elif self.version == '2.1':
+                    self.threshold = 0.35
+                    if (
+                        (target == weight_label[idx_winner] or target == weight_label[idx_runnerUp]) and
+                        (min_distance > 1-self.threshold and max_distance < 1+self.threshold)
+                    ):
+                        self.weight[idx_winner] = self.weight[idx_winner] + self.alpha * (data - self.weight[idx_winner])
+                        self.weight[idx_runnerUp] = self.weight[idx_runnerUp] - self.alpha * (data - self.weight[idx_runnerUp])
+                    else:
+                        if target == weight_label[idx_min]:
+                            self.weight[idx_min] = self.weight[idx_min] + self.alpha * (data - self.weight[idx_min])
+                        else:
+                            self.weight[idx_min] = self.weight[idx_min] - self.alpha * (data - self.weight[idx_min])
+
+                elif self.version == '3':
+                    self.threshold = 0.2
+                    m = np.random.uniform(0.1, 0.5)
+                    beta = m * self.alpha
+                    if (min_distance > (1-self.threshold) * (1+self.threshold)):
+                        if (weight_label[idx_winner] != weight_label[idx_runnerUp]):
+                            if (target == weight_label[idx_winner] or target == weight_label[idx_runnerUp]):
+                                self.weight[idx_winner] = self.weight[idx_winner] + self.alpha * (data - self.weight[idx_winner])
+                                self.weight[idx_runnerUp] = self.weight[idx_runnerUp] - self.alpha * (data - self.weight[idx_runnerUp])
+                        else:
+                            self.weight[idx_winner] = self.weight[idx_winner] + beta * (data - self.weight[idx_winner])
+                            self.weight[idx_runnerUp] = self.weight[idx_runnerUp] + beta * (data - self.weight[idx_runnerUp])
+                    else:
+                        if target == weight_label[idx_min]:
+                            self.weight[idx_min] = self.weight[idx_min] + self.alpha * (data - self.weight[idx_min])
+                        else:
+                            self.weight[idx_min] = self.weight[idx_min] - self.alpha * (data - self.weight[idx_min])
+
+                else:
+                    if target == weight_label[idx_min]:
+                        self.weight[idx_min] = self.weight[idx_min] + self.alpha * (data - self.weight[idx_min])
+                    else:
+                        self.weight[idx_min] = self.weight[idx_min] - self.alpha * (data - self.weight[idx_min])
+
+            self.alpha = self.alpha * (1 - epoch / self.max_epoch)
+
+        weight_class = (self.weight, weight_label)
+        return weight_class
+
+    def test(self, test_data, weight_class):
+        """
+        Proses pengujian jaringan LVQ
+        :param test_data (numpy array atau pandas dataframe): Matriks yang berisi data uji
+        :param weight_class (tuple): Tuple yang berisi pasangan bobot dan labelnya
+        :return: Nilai prediksi label/class
+        """
+
+        weight, label = weight_class
+        output = []
+        for data in test_data:
+            distance = np.sqrt(np.sum((data - self.weight) ** 2, axis=1))
+            idx_min = np.argmin(distance)
+            output.append(label[idx_min])
+
+        return output
+
 # Implementasi untuk perhitungan distance
 class Distance():
 
@@ -570,6 +711,7 @@ class SLP(object):
         return output
 
 # Implementasi jaringan Self Organizing Map
+# Note: (yang rectangle dan hexagon masih belum jadi)
 class SOM(object):
 
     def __init__(self, sizeInput, sizeOutput, max_epoch, ordering=2, radius=0, alpha=np.random.random(), beta=np.random.random(), architecture='linear'):
@@ -633,20 +775,7 @@ class SOM(object):
 
                     # Update bobot tetangga
                     if self.architecture == 'rectangle':
-                        # Restruktur Neuron Output
-                        sizeOutput = np.sqrt(self.sizeOutput)
-                        while sizeOutput**2 != self.sizeOutput:
-                            self.sizeOutput += 1
-                            sizeOutput = np.sqrt(self.sizeOutput)
-                        weight = self.weight.reshape((sizeOutput, sizeOutput, self.sizeInput))
-
-                        # Convert indeks pemenang menjadi biner
-                        idx_min = np.binary_repr(int(idx_min))
-
-                        # Update bobot
-
-
-
+                        pass
                     elif self.architecture == 'hexagon':
                         pass
 
