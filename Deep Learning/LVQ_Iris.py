@@ -6,7 +6,8 @@ from sklearn.metrics import accuracy_score
 
 print(15*'=' + ' Learning Vector Quantization Pada Dataset Iris ' + 15*'=')
 
-data = pd.read_csv('../Dataset/iris.csv')
+# If get an error, read : https://stackoverflow.com/questions/50722067/file-btrain-csv-does-not-exist-even-though-file-exist
+data = pd.read_csv('./Dataset/iris.csv')
 del data['Id']
 # print(data.head())
 
