@@ -481,10 +481,11 @@ class MLPRegressor(object):
             Nilai aktivasi sesuai dengan fungsinya
         """
 
+        activation = self.activation(x, func=func)
         if func == 'binary sigmoid':
-            return self.activation(x, func='binary sigmoid') * (1 - self.activation(x, func='binary sigmoid'))
+            return activation * (1 - activation)
         elif func == 'bipolar sigmoid':
-            return 0.5 * (1 + self.activation(x, func='bipolar sigmoid')) * (1 - self.activation(x, func='bipolar sigmoid'))
+            return 0.5 * (1 + activation) * (1 - activation)
         else:
             return
 
@@ -539,13 +540,14 @@ class MLPRegressor(object):
                 errorOutput = (target - y) * derivative(y_in)
 
                 # Output -> Hidden
-                delta_weightOutput = self.alpha * errorOutput * z
+                delta_weightOutput = self.alpha * np.dot(z[:, None], errorOutput[None])
                 delta_biasOutput = self.alpha * errorOutput
-                error_in = np.dot(errorOutput, self.weightOutput)
+                error_in = np.dot(errorOutput, self.weightOutput.T)
                 errorHidden = error_in * derivative(z_in)
 
                 # Hidden -> Input
-                delta_weightHidden = self.alpha * errorHidden * data
+                # Ref : https://stackoverflow.com/questions/39026173/numpy-multiplying-different-shapes
+                delta_weightHidden = self.alpha * np.dot(data[:, None], errorHidden[None])
                 delta_biasHidden = self.alpha * errorHidden
 
                 # # Weight & Bias Update Phase

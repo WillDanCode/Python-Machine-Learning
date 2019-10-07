@@ -1,14 +1,15 @@
 from WildanNN import MLP
 import numpy as np
 import pandas as pd
+from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
 print(15*'=' + ' Multi Layer Perceptron (Backpropagation) Pada Dataset Iris ' + 15*'=')
 
-# If get an error, read : https://stackoverflow.com/questions/50722067/file-btrain-csv-does-not-exist-even-though-file-exist
-data = pd.read_csv('./Dataset/iris.csv')
-del data['Id']
+iris = load_iris()
+data = pd.DataFrame(data=iris.data, columns=iris.feature_names)
+data['Target'] = iris.target
 print(data.head())
 
 x_train, x_test, y_train, y_test = train_test_split(data.iloc[:, :-1], data.iloc[:, -1], test_size=0.3)
