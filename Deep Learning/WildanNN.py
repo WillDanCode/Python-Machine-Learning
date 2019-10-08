@@ -434,11 +434,12 @@ class LVQ(object):
 # Implementasi jaringan Multi Layer Perceptron / Backpropagation
 class MLPRegressor(object):
     
-    def __init__(self, sizeLayer, max_epoch, alpha=np.random.random(), threshold=np.random.random()):
+    def __init__(self, sizeLayer, max_epoch, initialize_WeightBias=False, alpha=np.random.random(), threshold=np.random.random()):
         """
         Inisialisasi class (constructor)
         :param sizeLayer (tuple): (input, hidden, output) => menunjukkan banyaknya neuron pada setiap layer
         :param max_epoch (int): Maksimal epoch yang diizinkan
+        :param initialize_WeightBias (bool): Inisialisasi bobot dan bias menggunakan metode Nguyen-Widrow
         :param alpha (float): learning rate
         :param threshold (float): nilai ambang batas
         """
@@ -453,6 +454,9 @@ class MLPRegressor(object):
         self.weightOutput = np.random.uniform(-0.5, 0.5, (self.sizeHidden, self.sizeOutput))
         self.biasHidden = np.random.uniform(-0.5, 0.5, self.sizeHidden)
         self.biasOutput = np.random.uniform(-0.5, 0.5, self.sizeOutput)
+
+        if initialize_WeightBias:
+            self.init_WeightBias()
 
     def activation(self, x, func='binary sigmoid'):
         """
@@ -507,6 +511,18 @@ class MLPRegressor(object):
         """
 
         return (self.weightHidden, self.weightOutput)
+
+    def init_WeightBias(self):
+        """
+        Inisialisasi bobot dan bias menggunakan metode Nguyen-Widrow
+        """
+
+        # Scale factor = beta
+        scale_factor = 0.7 * (self.sizeOutput ** (1/self.sizeInput))
+        self.weightHidden = np.random.uniform(-0.5, 0.5, (self.sizeInput, self.sizeHidden))
+        sqrt_weightHidden = np.sqrt(np.sum(self.weightHidden ** 2))
+        self.weightHidden = scale_factor * self.weightHidden / sqrt_weightHidden
+        self.biasHidden = np.random.uniform(-scale_factor, scale_factor, self.sizeHidden)
 
     def train(self, train_data, train_target):
         """
@@ -574,7 +590,7 @@ class MLPRegressor(object):
             y = activation(y_in)
             output.append(y)
 
-        output = np.array(output)
+        output = np.array(output).flatten()
         return output
 
 # Implementasi jaringan Single Layer Perceptron
