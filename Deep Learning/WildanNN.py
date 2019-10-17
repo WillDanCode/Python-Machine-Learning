@@ -431,32 +431,56 @@ class LVQ(object):
 
         return output
 
-# Implementasi jaringan Multi Layer Perceptron / Backpropagation
+# Implementasi jaringan Multi Layer Perceptron / Backpropagation Untuk Klasifikasi
+# class MLPClassifier(MLPRegressor):
+#     pass
+
+# Untuk membuat layer pada MLP
+class Layer:
+    
+    def __init__(self, neuron, input_dim=None, activation='binary sigmoid', initWeightBias=False):
+        """Inisialisasi class (constructor)
+        
+        Arguments:
+            neuron {int} -- jumlah neuron pada layer sekarang
+        
+        Keyword Arguments:
+            input_dim {int} -- jumlah neuron pada layer sebelumnya (default: {None})
+            activation {str} -- fungsi aktivasi yang akan digunakan (default: {'binary sigmoid'})
+            initWeightBias {bool} -- inisialisasi bobot dan bias (default: {False})
+        """
+
+        self.neuron = neuron
+        self.input_dim = input_dim
+        self.activation_func = activation
+        self.weight = np.random.uniform(-0.5, 0.5, (self.input_dim, self.neuron))
+        self.bias = np.random.uniform(-0.5, 0.5, self.neuron)
+
+# Implementasi jaringan Multi Layer Perceptron / Backpropagation Untuk Prediksi (Regresi)
 class MLPRegressor(object):
     
-    def __init__(self, sizeLayer, max_epoch, initialize_WeightBias=False, alpha=np.random.random(), threshold=np.random.random()):
-        """
-        Inisialisasi class (constructor)
-        :param sizeLayer (tuple): (input, hidden, output) => menunjukkan banyaknya neuron pada setiap layer
-        :param max_epoch (int): Maksimal epoch yang diizinkan
-        :param initialize_WeightBias (bool): Inisialisasi bobot dan bias menggunakan metode Nguyen-Widrow
-        :param alpha (float): learning rate
-        :param threshold (float): nilai ambang batas
+    def __init__(self, layers=[], max_epoch=100, initialize_WeightBias=False, alpha=np.random.random()):
+        """Inisialisasi class (constructor)
+        
+        Keyword Arguments:
+            layers {list} -- berisi layer-layer (default: {[]})
+            max_epoch {int} -- jumlah maksimum iterasi untuk training (default: {100})
+            initialize_WeightBias {bool} -- inisialisasi bobot dan bias (default: {False})
+            alpha {float} -- learning rate (default: {np.random.random()})
         """
 
-        self.sizeInput = sizeLayer[0]
-        self.sizeHidden = sizeLayer[1]
-        self.sizeOutput = sizeLayer[-1]
+        self.layers = layers
         self.max_epoch = max_epoch
         self.alpha = alpha
-        self.threshold = threshold
-        self.weightHidden = np.random.uniform(-0.5, 0.5, (self.sizeInput, self.sizeHidden))
-        self.weightOutput = np.random.uniform(-0.5, 0.5, (self.sizeHidden, self.sizeOutput))
-        self.biasHidden = np.random.uniform(-0.5, 0.5, self.sizeHidden)
-        self.biasOutput = np.random.uniform(-0.5, 0.5, self.sizeOutput)
 
-        if initialize_WeightBias:
-            self.init_WeightBias()
+        # if initialize_WeightBias:
+        #     self.init_WeightBias()
+
+    def levenbergMarquardt(self):
+        pass
+
+    def add(self, layer):
+        self.layers.append(layer)
 
     def activation(self, x, func='binary sigmoid'):
         """
@@ -480,9 +504,9 @@ class MLPRegressor(object):
         Fungsi turunan aktivasi
 
         :param x: float
-            Nilai yang akan dicari output aktivasinya
+            Nilai yang akan dicari turunan aktivasinya
         :return: float
-            Nilai aktivasi sesuai dengan fungsinya
+            Nilai turunan aktivasi sesuai dengan fungsinya
         """
 
         activation = self.activation(x, func=func)
@@ -524,6 +548,58 @@ class MLPRegressor(object):
         self.weightHidden = scale_factor * self.weightHidden / sqrt_weightHidden
         self.biasHidden = np.random.uniform(-scale_factor, scale_factor, self.sizeHidden)
 
+    def forward(self, data):
+
+        x = data
+        activation = np.vectorize(self.activation)
+        out_in, out = [], []
+        for layer in self.layers:
+            v_in = np.dot(x, layer.weight) + layer.bias
+            v = activation(v_in, layer.activation_func)
+
+            out_in.append(v_in)
+            out.append(v)
+            x = v
+        
+        return (out_in, out)
+
+    def backward(self, data, target, out_in, out):
+        
+        derivative = np.vectorize(self.activation_derivative)
+        delta_weight, delta_bias = [], []
+
+        # Gradient descent
+        error = (target - out[-1]) * derivative(out_in[-1])
+        for i, layer in reversed(list(enumerate(self.layers))):
+            if i == 0:
+                # Hidden -> Input
+                # Ref : https://stackoverflow.com/questions/39026173/numpy-multiplying-different-shapes
+                deltaWeight = self.alpha * np.dot(data[:, None], error[None])
+                deltaBias = self.alpha * error
+
+                delta_weight.append(deltaWeight)
+                delta_bias.append(deltaBias)
+            else:
+                # Output -> Hidden
+                deltaWeight = self.alpha * np.dot(out[i-1][:, None], error[None])
+                deltaBias = self.alpha * error
+
+                delta_weight.append(deltaWeight)
+                delta_bias.append(deltaBias)
+
+                error_in = np.dot(error, layer.weight.T)
+                error = error_in * derivative(out_in[i-1])
+
+        delta_weight = delta_weight[::-1]
+        delta_bias = delta_bias[::-1]
+        return (delta_weight, delta_bias)
+
+    def update(self, delta_weight, delta_bias):
+        
+        for i, layer in enumerate(self.layers):
+            layer.weight += delta_weight[i]
+            layer.bias += delta_bias[i]
+
     def train(self, train_data, train_target):
         """
         Proses pelatihan jaringan MLP
@@ -532,8 +608,6 @@ class MLPRegressor(object):
         :return: bobot dan label dari bobot
         """
 
-        activation = np.vectorize(self.activation)
-        derivative = np.vectorize(self.activation_derivative)
         epoch = 0
         iterasi = 0
         while epoch <= self.max_epoch:
@@ -543,34 +617,14 @@ class MLPRegressor(object):
                 iterasi += 1
                 # print('Iterasi', iterasi)
 
-                # # Feedforward Phase
-                # Input -> Hidden
-                z_in = np.dot(data, self.weightHidden) + self.biasHidden
-                z = activation(z_in)
-                # Hidden -> Output
-                y_in = np.dot(z, self.weightOutput) + self.biasOutput
-                y = activation(y_in)
+                # Forward Propagation Phase
+                out_in, out = self.forward(data)
 
-                # # Backpropagation Phase (Error Distribution)
-                # Gradient descent
-                errorOutput = (target - y) * derivative(y_in)
+                # Backward Propagation Phase (Error Distribution)
+                delta_weight, delta_bias = self.backward(data, target, out_in, out)
 
-                # Output -> Hidden
-                delta_weightOutput = self.alpha * np.dot(z[:, None], errorOutput[None])
-                delta_biasOutput = self.alpha * errorOutput
-                error_in = np.dot(errorOutput, self.weightOutput.T)
-                errorHidden = error_in * derivative(z_in)
-
-                # Hidden -> Input
-                # Ref : https://stackoverflow.com/questions/39026173/numpy-multiplying-different-shapes
-                delta_weightHidden = self.alpha * np.dot(data[:, None], errorHidden[None])
-                delta_biasHidden = self.alpha * errorHidden
-
-                # # Weight & Bias Update Phase
-                self.weightOutput = self.weightOutput + delta_weightOutput
-                self.biasOutput = self.biasOutput + delta_biasOutput
-                self.weightHidden = self.weightHidden + delta_weightHidden
-                self.biasHidden = self.biasHidden + delta_biasHidden
+                # Weight & Bias Update Phase
+                self.update(delta_weight, delta_bias)
 
     def test(self, test_data):
         """
@@ -580,17 +634,12 @@ class MLPRegressor(object):
         """
 
         output = []
-        activation = np.vectorize(self.activation)
         for data in test_data:
-            # Input -> Hidden
-            z_in = np.dot(data, self.weightHidden) + self.biasHidden
-            z = activation(z_in)
-            # Hidden -> Output
-            y_in = np.dot(z, self.weightOutput) + self.biasOutput
-            y = activation(y_in)
-            output.append(y)
+            # Forward Propagation Phase
+            out_in, out = self.forward(data)
+            output.append(out[-1])
 
-        output = np.array(output).flatten()
+        output = np.array(output)
         return output
 
 # Implementasi jaringan Single Layer Perceptron
