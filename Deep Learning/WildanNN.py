@@ -438,7 +438,7 @@ class LVQ(object):
 # Untuk membuat layer pada MLP
 class Layer:
     
-    def __init__(self, neuron, input_dim=None, activation='binary sigmoid', initWeightBias=False):
+    def __init__(self, neuron, input_dim=None, activation='binary sigmoid', initialize_WeightBias=False):
         """Inisialisasi class (constructor)
         
         Arguments:
@@ -447,7 +447,7 @@ class Layer:
         Keyword Arguments:
             input_dim {int} -- jumlah neuron pada layer sebelumnya (default: {None})
             activation {str} -- fungsi aktivasi yang akan digunakan (default: {'binary sigmoid'})
-            initWeightBias {bool} -- inisialisasi bobot dan bias (default: {False})
+            initialize_WeightBias {bool} -- inisialisasi bobot dan bias (default: {False})
         """
 
         self.neuron = neuron
@@ -456,40 +456,53 @@ class Layer:
         self.weight = np.random.uniform(-0.5, 0.5, (self.input_dim, self.neuron))
         self.bias = np.random.uniform(-0.5, 0.5, self.neuron)
 
+        if initialize_WeightBias:
+            self.init_WeightBias()
+
+    def init_WeightBias(self):
+        """
+        Inisialisasi bobot dan bias menggunakan metode Nguyen-Widrow
+        """
+
+        # Scale factor = beta
+        scale_factor = 0.7 * (self.neuron ** (1/self.input_dim))
+        self.weight = np.random.uniform(-0.5, 0.5, (self.input_dim, self.neuron))
+        sqrt_weight = np.sqrt(np.sum(self.weight ** 2))
+        self.weight = scale_factor * self.weight / sqrt_weight
+        self.bias = np.random.uniform(-scale_factor, scale_factor, self.neuron)
+
 # Implementasi jaringan Multi Layer Perceptron / Backpropagation Untuk Prediksi (Regresi)
 class MLPRegressor(object):
     
-    def __init__(self, layers=[], max_epoch=100, initialize_WeightBias=False, alpha=np.random.random()):
+    def __init__(self, layers=[], max_epoch=100, alpha=np.random.random(), beta=10):
         """Inisialisasi class (constructor)
         
         Keyword Arguments:
             layers {list} -- berisi layer-layer (default: {[]})
             max_epoch {int} -- jumlah maksimum iterasi untuk training (default: {100})
-            initialize_WeightBias {bool} -- inisialisasi bobot dan bias (default: {False})
             alpha {float} -- learning rate (default: {np.random.random()})
+            beta {int} -- learning rate decayer (default: {10})
         """
 
         self.layers = layers
         self.max_epoch = max_epoch
         self.alpha = alpha
-
-        # if initialize_WeightBias:
-        #     self.init_WeightBias()
+        self.beta = beta
 
     def levenbergMarquardt(self):
         pass
 
-    def add(self, layer):
-        self.layers.append(layer)
-
     def activation(self, x, func='binary sigmoid'):
-        """
-        Fungsi aktivasi
-
-        :param x: float
-            Nilai yang akan dicari output aktivasinya
-        :return: float
-            Nilai aktivasi sesuai dengan fungsinya
+        """Fungsi aktivasi
+        
+        Arguments:
+            x {float} -- nilai yang akan dicari aktivasinya
+        
+        Keyword Arguments:
+            func {str} -- metode aktivasi (default: {'binary sigmoid'})
+        
+        Returns:
+            float -- hasil aktivasi
         """
 
         if func == 'binary sigmoid':
@@ -500,13 +513,16 @@ class MLPRegressor(object):
             return
     
     def activation_derivative(self, x, func='binary sigmoid'):
-        """
-        Fungsi turunan aktivasi
-
-        :param x: float
-            Nilai yang akan dicari turunan aktivasinya
-        :return: float
-            Nilai turunan aktivasi sesuai dengan fungsinya
+        """Fungsi turunan aktivasi
+        
+        Arguments:
+            x {float} -- nilai yang akan dicari turunan aktivasinya
+        
+        Keyword Arguments:
+            func {str} -- metode turunan aktivasi (default: {'binary sigmoid'})
+        
+        Returns:
+            float -- hasil turunan aktivasi
         """
 
         activation = self.activation(x, func=func)
@@ -517,120 +533,222 @@ class MLPRegressor(object):
         else:
             return
 
-    def getBias(self):
-        """
-        Mendapatkan bias jaringan MLP setelah proses training
-
-        :return: bias
-            Nilai bias
-        """
-
-        return (self.biasHidden, self.biasOutput)
-
-    def getWeight(self):
-        """
-        Mendapatkan bobot jaringan MLP setelah proses training
-
-        :return: weight (nilai bobot)
+    def add(self, layer):
+        """Untuk menambah layer
+        
+        Arguments:
+            layer {object} -- sebuah objek layer
         """
 
-        return (self.weightHidden, self.weightOutput)
-
-    def init_WeightBias(self):
-        """
-        Inisialisasi bobot dan bias menggunakan metode Nguyen-Widrow
-        """
-
-        # Scale factor = beta
-        scale_factor = 0.7 * (self.sizeOutput ** (1/self.sizeInput))
-        self.weightHidden = np.random.uniform(-0.5, 0.5, (self.sizeInput, self.sizeHidden))
-        sqrt_weightHidden = np.sqrt(np.sum(self.weightHidden ** 2))
-        self.weightHidden = scale_factor * self.weightHidden / sqrt_weightHidden
-        self.biasHidden = np.random.uniform(-scale_factor, scale_factor, self.sizeHidden)
+        self.layers.append(layer)
 
     def forward(self, data):
+        """Untuk melakukan fase forward propagation
+        
+        Arguments:
+            data {list} -- list data
+        
+        Returns:
+            tuple of list -- hasil training dan aktivasinya
+        """
 
         x = data
         activation = np.vectorize(self.activation)
         out_in, out = [], []
         for layer in self.layers:
-            v_in = np.dot(x, layer.weight) + layer.bias
-            v = activation(v_in, layer.activation_func)
+            n = np.dot(x, layer.weight) + layer.bias
+            a = activation(n, layer.activation_func)
 
-            out_in.append(v_in)
-            out.append(v)
-            x = v
+            out_in.append(n)
+            out.append(a)
+            x = a
         
         return (out_in, out)
 
-    def backward(self, data, target, out_in, out):
+    def backpropagation(self, data, target, out_in, out, method='sgd'):
+        """Untuk melakukan fase backpropagation of error
+        Ref : 
+        [1] Hagan, M.T., H.B. Demuth, and M.H. Beale, Neural Network Design, Boston, MA: PWS Publishing, 1996.
         
+        Arguments:
+            data {list} -- list data
+            target {int/float} -- target
+            out_in {list} -- hasil training feed forward
+            out {list} -- aktivasi hasil training feed forward
+            method {str} -- metode yang dipakai ({'sgd':'stochastic gradient descent', 'lm':'levenberg-marquardt'})
+        
+        Returns:
+            tuple of list -- delta (selisih) bobot dan bias
+        """
+        
+        p = data
+        t = target
+        n = out_in
+        a = out
+
         derivative = np.vectorize(self.activation_derivative)
         delta_weight, delta_bias = [], []
 
-        # Gradient descent
-        error = (target - out[-1]) * derivative(out_in[-1])
-        for i, layer in reversed(list(enumerate(self.layers))):
-            if i == 0:
-                # Hidden -> Input
-                # Ref : https://stackoverflow.com/questions/39026173/numpy-multiplying-different-shapes
-                deltaWeight = self.alpha * np.dot(data[:, None], error[None])
-                deltaBias = self.alpha * error
+        if method == 'lm':
+            # Levenberg-Marquardt
 
-                delta_weight.append(deltaWeight)
-                delta_bias.append(deltaBias)
-            else:
-                # Output -> Hidden
-                deltaWeight = self.alpha * np.dot(out[i-1][:, None], error[None])
-                deltaBias = self.alpha * error
+            miu = self.alpha
+            
+            # Menghitung vector of error
+            v = []
+            for element_a in a:
+                element_a = np.array(element_a)
+                e = t - element_a
+                sse = np.sum(e**2)
+                v.append(sse)
 
-                delta_weight.append(deltaWeight)
-                delta_bias.append(deltaBias)
+            # Menghitung sensitivity (s)
+            s = -derivative(n[-1])
+            for i, layer in reversed(list(enumerate(self.layers))):
+                if i == 0:
+                    # Hidden -> Input
+                    jacobWeight = np.dot(p[:, None], s[None])
+                    jacobBias = s
+                    # delta = ((J.T * J + u * I) ** -1) * (J.T * v)
+                    deltaWeight = np.dot(np.linalg.inv(np.dot(jacobWeight.T, jacobWeight) + miu * np.identity(jacobWeight.shape[1])), np.dot(jacobWeight.T, v[i]))
+                    deltaBias = np.dot(np.linalg.inv(np.dot(jacobBias.T, jacobBias) + miu * np.identity(jacobBias.shape[0])), np.dot(jacobBias.T, v[i]))
 
-                error_in = np.dot(error, layer.weight.T)
-                error = error_in * derivative(out_in[i-1])
+                    deltaWeight = deltaWeight.T
+                    deltaBias = deltaBias.T
 
-        delta_weight = delta_weight[::-1]
-        delta_bias = delta_bias[::-1]
+                    delta_weight.append(deltaWeight)
+                    delta_bias.append(deltaBias)
+                else:
+                    # Output -> Hidden
+                    jacobWeight = np.dot(a[i-1][:, None], s[None])
+                    jacobBias = s
+                    # delta = ((J.T * J + u * I) ** -1) * (J.T * v)
+                    deltaWeight = np.dot(np.linalg.inv(np.dot(jacobWeight.T, jacobWeight) + miu * np.identity(jacobWeight.shape[1])), np.dot(jacobWeight.T, v[i-1]))
+                    deltaBias =  np.dot(np.linalg.inv(np.dot(jacobBias.T, jacobBias) + miu * np.identity(jacobBias.shape[0])), np.dot(jacobBias.T, v[i-1]))
+
+                    deltaWeight = deltaWeight.T
+                    deltaBias = deltaBias.T
+                    
+                    delta_weight.append(deltaWeight)
+                    delta_bias.append(deltaBias)
+
+                    # Jacobian Matrix = w * derivative(n)
+                    s_in = np.dot(s, layer.weight.T)
+                    s = s_in * derivative(n[i-1])
+
+            delta_weight = delta_weight[::-1]
+            delta_bias = delta_bias[::-1]
+        else:
+            # Stochastic Gradient descent / Steepest descent
+
+            # Menghitung sensitivity (s)
+            # error = (target - out[-1]) * derivative(out_in[-1])
+            s = -2 * (t - a[-1]) * derivative(n[-1])
+            for i, layer in reversed(list(enumerate(self.layers))):
+                if i == 0:
+                    # Hidden -> Input
+                    # Ref : https://stackoverflow.com/questions/39026173/numpy-multiplying-different-shapes
+                    # deltaWeight (df/dw) = df/dn * dn/dw
+                    deltaWeight = self.alpha * np.dot(p[:, None], s[None])
+                    # deltaBias (df/db) = df/dn * dn/db
+                    deltaBias = self.alpha * s
+
+                    delta_weight.append(deltaWeight)
+                    delta_bias.append(deltaBias)
+                else:
+                    # Output -> Hidden
+                    # deltaWeight (df/dw) = df/dn * dn/dw
+                    deltaWeight = self.alpha * np.dot(a[i-1][:, None], s[None])
+                    # deltaBias (df/db) = df/dn * dn/db
+                    deltaBias = self.alpha * s
+
+                    delta_weight.append(deltaWeight)
+                    delta_bias.append(deltaBias)
+
+                    # Jacobian Matrix = w * derivative(n)
+                    s_in = np.dot(s, layer.weight.T)
+                    s = s_in * derivative(n[i-1])
+
+            delta_weight = delta_weight[::-1]
+            delta_bias = delta_bias[::-1]
+
         return (delta_weight, delta_bias)
 
     def update(self, delta_weight, delta_bias):
+        """Untuk melakukan update bobot dan bias
+        
+        Arguments:
+            delta_weight {list} -- selisih bobot
+            delta_bias {list} -- selisih bias
+        """
         
         for i, layer in enumerate(self.layers):
-            layer.weight += delta_weight[i]
-            layer.bias += delta_bias[i]
+            # layer.weight += delta_weight[i]
+            # layer.bias += delta_bias[i]
+            layer.weight -= delta_weight[i]
+            layer.bias -= delta_bias[i]
 
-    def train(self, train_data, train_target):
-        """
-        Proses pelatihan jaringan MLP
-        :param train_data (numpy array): Matriks yang berisi data latih
-        :param train_target (numpy array): Array yang berisi label dari data latih
-        :return: bobot dan label dari bobot
+    def train(self, train_data, train_target, optimizer='sgd'):
+        """Proses pelatihan jaringan MLP
+        
+        Arguments:
+            train_data {numpy array} -- matriks data latih
+            train_target {numpy array} -- array target latih
+        
+        Keyword Arguments:
+            optimizer {str} -- metode oprimasi training yang digunakan (default: {'sgd'})
         """
 
         epoch = 0
         iterasi = 0
+        sse = 0
+        sse_before = 999999999
         while epoch <= self.max_epoch:
             epoch += 1
             # print('\nEpoch', epoch)
+            error = []
             for data, target in zip(train_data, train_target):
                 iterasi += 1
                 # print('Iterasi', iterasi)
 
                 # Forward Propagation Phase
                 out_in, out = self.forward(data)
+                e = (target - out[-1]) ** 2
+                error.append(e)
 
-                # Backward Propagation Phase (Error Distribution)
-                delta_weight, delta_bias = self.backward(data, target, out_in, out)
+                # Backward Propagation Phase (Error Distribution / Backpropagation of Error)
+                delta_weight, delta_bias = self.backpropagation(data, target, out_in, out, method=optimizer)
 
-                # Weight & Bias Update Phase
-                self.update(delta_weight, delta_bias)
+                if epoch == 1:
+                    # Weight & Bias Update Phase
+                    self.update(delta_weight, delta_bias)
+                else:
+                    if sse < sse_before:
+                        # Weight & Bias Update Phase
+                        self.update(delta_weight, delta_bias)
+                        sse_before = sse
+                    else:
+                        # Backward Propagation Phase (Error Distribution / Backpropagation of Error)
+                        delta_weight, delta_bias = self.backpropagation(data, target, out_in, out, method=optimizer)
+                        # Weight & Bias Update Phase
+                        self.update(delta_weight, delta_bias)
+
+            if sse < sse_before:
+                self.alpha /= self.beta
+            else:
+                self.alpha *= self.beta
+            
+            # Sum Squared Error
+            sse = np.sum(error)
 
     def test(self, test_data):
-        """
-        Proses pengujian jaringan MLP
-        :param test_data (numpy array atau pandas dataframe): Matriks yang berisi data uji
-        :return: Nilai prediksi
+        """Proses pengujian jaringan MLP
+        
+        Arguments:
+            test_data {numpy array} -- matriks data uji
+        
+        Returns:
+            numpy array -- hasil prediksi
         """
 
         output = []

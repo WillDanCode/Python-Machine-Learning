@@ -13,15 +13,6 @@ data.drop(columns=['X', 'Y', 'month', 'day', 'rain'], inplace=True)
 print(data.head())
 
 x_train, x_test, y_train, y_test = train_test_split(data.iloc[:, :-1], data.iloc[:, -1], test_size=0.2)
-data_train = x_train.copy()
-data_train[y_train.name] = y_train.copy()
-data_test = x_test.copy()
-data_test[y_test.name] = y_test.copy()
-
-# x_train = np.array(x_train)
-# x_test = np.array(x_test)
-# y_train = np.array(y_train)
-# y_test = np.array(y_test)
 
 # Normalization
 # Ref : https://stackoverflow.com/questions/38058774/scikit-learn-how-to-scale-back-the-y-predicted-result
@@ -33,9 +24,6 @@ x_test = scalerx.transform(x_test)
 y_train = scalery.transform(y_train[:, None])
 y_test = scalery.transform(y_test[:, None])
 
-# y_train = y_train.flatten()
-# y_test = y_test.flatten()
-
 n_input = x_train.shape[1] # 7
 n_hidden1 = 10
 n_hidden2 = 7
@@ -46,8 +34,8 @@ hidden2 = Layer(n_hidden2, input_dim=n_hidden1)
 output = Layer(n_output, input_dim=n_hidden2)
 layers = [hidden1, hidden2, output]
 
-mlp = MLPRegressor(layers=layers, max_epoch=100, alpha=0.1, initialize_WeightBias=True)
-mlp.train(x_train, y_train)
+mlp = MLPRegressor(layers=layers, max_epoch=100, alpha=0.01)
+mlp.train(x_train, y_train, optimizer='lm')
 # weightHidden, weightOutput = mlp.getWeight()
 # biasHidden, biasOutput = mlp.getBias()
 # print('Bobot Hidden: ', weightHidden.shape)
