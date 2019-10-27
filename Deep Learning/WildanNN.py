@@ -489,9 +489,6 @@ class MLPRegressor(object):
         self.alpha = alpha
         self.beta = beta
 
-    def levenbergMarquardt(self):
-        pass
-
     def activation(self, x, func='binary sigmoid'):
         """Fungsi aktivasi
         
@@ -595,23 +592,20 @@ class MLPRegressor(object):
             miu = self.alpha
             
             # Menghitung vector of error
-            v = []
-            for element_a in a:
-                element_a = np.array(element_a)
-                e = t - element_a
-                sse = np.sum(e**2)
-                v.append(sse)
+            e = (t - a[-1])
+            v = np.sum(e**2)
 
             # Menghitung sensitivity (s)
             s = -derivative(n[-1])
+            # v = np.sum(s**2)
             for i, layer in reversed(list(enumerate(self.layers))):
                 if i == 0:
                     # Hidden -> Input
                     jacobWeight = np.dot(p[:, None], s[None])
                     jacobBias = s
                     # delta = ((J.T * J + u * I) ** -1) * (J.T * v)
-                    deltaWeight = np.dot(np.linalg.inv(np.dot(jacobWeight.T, jacobWeight) + miu * np.identity(jacobWeight.shape[1])), np.dot(jacobWeight.T, v[i]))
-                    deltaBias = np.dot(np.linalg.inv(np.dot(jacobBias.T, jacobBias) + miu * np.identity(jacobBias.shape[0])), np.dot(jacobBias.T, v[i]))
+                    deltaWeight = np.dot(np.linalg.inv(np.dot(jacobWeight.T, jacobWeight) + miu * np.identity(jacobWeight.shape[1])), np.dot(jacobWeight.T, v))
+                    deltaBias = np.dot(np.linalg.inv(np.dot(jacobBias.T, jacobBias) + miu * np.identity(jacobBias.shape[0])), np.dot(jacobBias.T, v))
 
                     deltaWeight = deltaWeight.T
                     deltaBias = deltaBias.T
@@ -623,8 +617,8 @@ class MLPRegressor(object):
                     jacobWeight = np.dot(a[i-1][:, None], s[None])
                     jacobBias = s
                     # delta = ((J.T * J + u * I) ** -1) * (J.T * v)
-                    deltaWeight = np.dot(np.linalg.inv(np.dot(jacobWeight.T, jacobWeight) + miu * np.identity(jacobWeight.shape[1])), np.dot(jacobWeight.T, v[i-1]))
-                    deltaBias =  np.dot(np.linalg.inv(np.dot(jacobBias.T, jacobBias) + miu * np.identity(jacobBias.shape[0])), np.dot(jacobBias.T, v[i-1]))
+                    deltaWeight = np.dot(np.linalg.inv(np.dot(jacobWeight.T, jacobWeight) + miu * np.identity(jacobWeight.shape[1])), np.dot(jacobWeight.T, v))
+                    deltaBias =  np.dot(np.linalg.inv(np.dot(jacobBias.T, jacobBias) + miu * np.identity(jacobBias.shape[0])), np.dot(jacobBias.T, v))
 
                     deltaWeight = deltaWeight.T
                     deltaBias = deltaBias.T
@@ -635,6 +629,7 @@ class MLPRegressor(object):
                     # Jacobian Matrix = w * derivative(n)
                     s_in = np.dot(s, layer.weight.T)
                     s = s_in * derivative(n[i-1])
+                    v = np.sum(s**2)
 
             delta_weight = delta_weight[::-1]
             delta_bias = delta_bias[::-1]
@@ -701,45 +696,46 @@ class MLPRegressor(object):
 
         epoch = 0
         iterasi = 0
-        sse = 0
-        sse_before = 999999999
         while epoch <= self.max_epoch:
             epoch += 1
-            # print('\nEpoch', epoch)
-            error = []
+            # print('\nEpoch ', epoch)
+            sse = 0
             for data, target in zip(train_data, train_target):
                 iterasi += 1
-                # print('Iterasi', iterasi)
+                print('Iterasi ', iterasi)
+
+                sse_before = sse
+                # print('sse before: ', sse_before)
 
                 # Forward Propagation Phase
                 out_in, out = self.forward(data)
-                e = (target - out[-1]) ** 2
-                error.append(e)
+                e = (target - out[-1])
+                sse = np.sum(e**2)
+                print('sse: ', sse)
 
                 # Backward Propagation Phase (Error Distribution / Backpropagation of Error)
                 delta_weight, delta_bias = self.backpropagation(data, target, out_in, out, method=optimizer)
 
-                if epoch == 1:
+                # # Weight & Bias Update Phase
+                # self.update(delta_weight, delta_bias)
+
+                if sse < sse_before:
+                    self.alpha /= self.beta
+
                     # Weight & Bias Update Phase
                     self.update(delta_weight, delta_bias)
                 else:
-                    if sse < sse_before:
-                        # Weight & Bias Update Phase
-                        self.update(delta_weight, delta_bias)
-                        sse_before = sse
-                    else:
-                        # Backward Propagation Phase (Error Distribution / Backpropagation of Error)
-                        delta_weight, delta_bias = self.backpropagation(data, target, out_in, out, method=optimizer)
-                        # Weight & Bias Update Phase
-                        self.update(delta_weight, delta_bias)
+                    self.alpha *= self.beta
 
-            if sse < sse_before:
-                self.alpha /= self.beta
-            else:
-                self.alpha *= self.beta
+                    # Backward Propagation Phase (Error Distribution / Backpropagation of Error)
+                    delta_weight, delta_bias = self.backpropagation(data, target, out_in, out, method=optimizer)
+
+                    # Weight & Bias Update Phase
+                    self.update(delta_weight, delta_bias)
+                
+                print('-' * 40)
             
-            # Sum Squared Error
-            sse = np.sum(error)
+            print('=' * 40)
 
     def test(self, test_data):
         """Proses pengujian jaringan MLP

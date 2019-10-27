@@ -34,7 +34,7 @@ hidden2 = Layer(n_hidden2, input_dim=n_hidden1)
 output = Layer(n_output, input_dim=n_hidden2)
 layers = [hidden1, hidden2, output]
 
-mlp = MLPRegressor(layers=layers, max_epoch=100, alpha=0.01)
+mlp = MLPRegressor(layers=layers, max_epoch=10, alpha=0.01)
 mlp.train(x_train, y_train, optimizer='lm')
 # weightHidden, weightOutput = mlp.getWeight()
 # biasHidden, biasOutput = mlp.getBias()
@@ -43,13 +43,20 @@ mlp.train(x_train, y_train, optimizer='lm')
 # print('Bias Hidden: ', biasHidden.shape)
 # print('Bias Output: ', biasOutput.shape)
 
-# uji dengan menggunakan data latih, bandingkan hasilnya dengan target
+# Pengujian
+y_pred = mlp.test(x_train)
+y_pred = scalery.inverse_transform(y_pred)
+y_train = scalery.inverse_transform(y_train)
+print('Label Pred: ', y_pred.shape)
+print('Label True: ', y_train.shape)
+print('MSE Train:', mean_squared_error(y_train, y_pred))
+
 y_pred = mlp.test(x_test)
 y_pred = scalery.inverse_transform(y_pred)
 y_test = scalery.inverse_transform(y_test)
 print('Label Pred: ', y_pred.shape)
 print('Label True: ', y_test.shape)
-print('MSE:', mean_squared_error(y_test, y_pred))
+print('MSE Test:', mean_squared_error(y_test, y_pred))
 
 # Benchmark
 # mlpr = nn.MLPRegressor(hidden_layer_sizes=(n_hidden,1), alpha=0.1, max_iter=1000)
